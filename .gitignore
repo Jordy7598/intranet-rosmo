@@ -1,0 +1,51 @@
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# --- Build / Dist ---
+dist/
+build/
+.cache/
+.tmp/
+
+# --- Logs ---
+logs
+*.log
+*.log.*
+*.out
+*.err
+
+# --- Environment ---
+.env
+.env.local
+.env.*.local
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+
+# --- Coverage / Tests ---
+coverage/
+*.lcov
+jest-html-reporters-*
+
+# --- MySQL Dumps ---
+*.sql
+*.dump
+
+# --- Misc ---
+*.tar.gz
+*.zip
