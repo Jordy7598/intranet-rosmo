@@ -1,6 +1,13 @@
+// src/services/vacaciones.service.ts
 import { pool } from "../config/db";
 
-class AppError extends Error { statusCode:number; constructor(msg:string, code=400){super(msg);this.statusCode=code;} }
+class AppError extends Error {
+  statusCode: number;
+  constructor(msg: string, code = 400) {
+    super(msg);
+    this.statusCode = code;
+  }
+}
 
 type Estado = "Pendiente" | "PendienteRH" | "Aprobado" | "Rechazado";
 
@@ -23,8 +30,7 @@ async function getUsuarioIdByEmpleado(conn: any, empleadoId: number): Promise<nu
   return rows.length ? rows[0].ID_Usuario : null;
 }
 
-async function getJefeInmediatoUsuarioId(conn: any, empleadoId: number): Promise<number | null> {
-  // empleado -> jefe (empleado) -> usuario
+async function getJefeInmediatoEmpleadoId(conn: any, empleadoId: number): Promise<number | null> {
   const [rows]: any = await conn.query(
     `SELECT e2.ID_Empleado AS JefeEmpleadoId
        FROM empleado e
@@ -32,8 +38,13 @@ async function getJefeInmediatoUsuarioId(conn: any, empleadoId: number): Promise
       WHERE e.ID_Empleado=?`,
     [empleadoId]
   );
-  if (!rows.length || !rows[0].JefeEmpleadoId) return null;
-  return getUsuarioIdByEmpleado(conn, rows[0].JefeEmpleadoId);
+  return (rows.length && rows[0].JefeEmpleadoId) ? rows[0].JefeEmpleadoId : null;
+}
+
+async function getJefeInmediatoUsuarioId(conn: any, empleadoId: number): Promise<number | null> {
+  const jefeEmpleado = await getJefeInmediatoEmpleadoId(conn, empleadoId);
+  if (!jefeEmpleado) return null;
+  return getUsuarioIdByEmpleado(conn, jefeEmpleado);
 }
 
 async function getUsuariosTalentoHumano(conn: any): Promise<number[]> {
@@ -58,13 +69,19 @@ async function notify(
   );
 }
 
+function nivelPorRol(rolId:number): number {
+  if (rolId === ROL_JEFE) return 1;
+  if (rolId === ROL_TH || rolId === ROL_ADMIN) return 2;
+  return 0;
+}
+
 /* ===================== Crear solicitud ===================== */
 
 export async function crearSolicitud(params: {
   empleadoId: number;
-  usuarioId: number; // no se usa para notificar al solicitante, solo por si lo necesitas
+  usuarioId: number; // quien crea la solicitud
   fechaInicio: string; // 'YYYY-MM-DD'
-  fechaFin: string;   // 'YYYY-MM-DD'
+  fechaFin: string;    // 'YYYY-MM-DD'
   motivo?: string;
 }) {
   const { empleadoId, fechaInicio, fechaFin, motivo } = params;
@@ -81,18 +98,31 @@ export async function crearSolicitud(params: {
   try {
     await conn.beginTransaction();
 
-    // empleado activo y días disponibles
+    // Validar empleado activo
     const [empRows]: any = await conn.query(
-      `SELECT ID_Empleado, Nombre, Apellido, Dias_Vacaciones_Anuales,
-              IFNULL(Dias_Vacaciones_Tomados,0) AS Tomados, Estado
-         FROM empleado WHERE ID_Empleado=?`, [empleadoId]
+      `SELECT ID_Empleado, Nombre, Apellido, Estado
+         FROM empleado WHERE ID_Empleado=?`,
+      [empleadoId]
     );
     if (empRows.length === 0) throw new AppError("Empleado no existe", 404);
     if (empRows[0].Estado !== "Activo") throw new AppError("Empleado inactivo");
-    const disponibles = (empRows[0].Dias_Vacaciones_Anuales || 0) - (empRows[0].Tomados || 0);
-    if (diasSolicitados > disponibles) throw new AppError(`No tiene días suficientes. Disponibles: ${disponibles}`);
 
-    // solapamiento
+    // Saldo desde la vista (cálculo en BD)
+    const [saldoRows]: any = await conn.query(
+      `SELECT disponibles, acumulado, tomados
+         FROM vw_vacaciones_disponibles_simple
+        WHERE ID_Empleado=?`,
+      [empleadoId]
+    );
+    if (!saldoRows.length) throw new AppError("No se encontró saldo para el empleado", 404);
+    const saldo = saldoRows[0];
+
+    // Bloquear si no alcanza
+    if (diasSolicitados > Number(saldo.disponibles || 0)) {
+      throw new AppError(`No tiene días suficientes. Disponibles: ${saldo.disponibles}`, 400);
+    }
+
+    // Solapamiento con otras solicitudes (incluye Pendiente/PendienteRH/Aprobado)
     const [overlap]: any = await conn.query(
       `SELECT COUNT(*) AS cnt
          FROM vacacion
@@ -105,13 +135,14 @@ export async function crearSolicitud(params: {
     );
     if (overlap[0].cnt > 0) throw new AppError("Existe una solicitud que se solapa con ese rango");
 
+    // Insertar
     await conn.query(
       `INSERT INTO vacacion (ID_Empleado, Fecha_Solicitud, Fecha_Inicio, Fecha_Fin, Dias_Solicitados, Motivo, Estado)
        VALUES (?, NOW(), ?, ?, ?, ?, 'Pendiente')`,
       [empleadoId, fechaInicio, fechaFin, diasSolicitados, motivo || null]
     );
 
-    /* Notificación: nueva solicitud → Jefe inmediato */
+    // Notificar a Jefe inmediato
     const jefeUsuarioId = await getJefeInmediatoUsuarioId(conn, empleadoId);
     if (jefeUsuarioId) {
       const nombre = `${empRows[0].Nombre || ""} ${empRows[0].Apellido || ""}`.trim();
@@ -152,7 +183,8 @@ export async function obtenerDetalle(id: number, user: { id:number; rol:number; 
     `SELECT v.*, e.Nombre, e.Apellido
        FROM vacacion v
   LEFT JOIN empleado e ON e.ID_Empleado = v.ID_Empleado
-      WHERE v.ID_vacacion = ?`, [id]
+      WHERE v.ID_vacacion = ?`,
+    [id]
   );
   if (rows.length === 0) return null;
 
@@ -190,7 +222,7 @@ export async function cambiarEstado(params: {
     // usuario solicitante (mapeo empleado -> usuario)
     const solicitanteUsuarioId = await getUsuarioIdByEmpleado(conn, vac.ID_Empleado);
 
-    // Rechazo: notificar a usuario
+    /* ===== RECHAZO (cualquier rol) ===== */
     if (estado === "Rechazado") {
       await conn.query(
         `UPDATE vacacion SET Estado='Rechazado' WHERE ID_vacacion=?`,
@@ -211,10 +243,16 @@ export async function cambiarEstado(params: {
       return { ok: true };
     }
 
-    // Aprobación por Jefe → pasa a PendienteRH y notifica
+    /* ===== APROBACIÓN POR JEFE (Nivel 1) → PendienteRH ===== */
     if (aprobadorRolId === ROL_JEFE) {
       if (vac.Estado !== "Pendiente")
         throw new AppError("El Jefe solo puede aprobar solicitudes en estado Pendiente");
+
+      // Validar que el aprobador sea el Jefe inmediato del empleado
+      const jefeUsuarioId = await getJefeInmediatoUsuarioId(conn, vac.ID_Empleado);
+      if (!jefeUsuarioId || jefeUsuarioId !== aprobadorUsuarioId) {
+        throw new AppError("Solo el jefe inmediato puede aprobar en Nivel 1", 403);
+      }
 
       await conn.query(
         `INSERT INTO aprobacion_vacacion (ID_Vacacion, ID_Aprobador, Nivel_Aprobacion, Fecha_Aprobacion, Estado)
@@ -229,7 +267,9 @@ export async function cambiarEstado(params: {
 
       // Notificar a solicitante y a RH
       if (solicitanteUsuarioId) {
-        await notify(conn, solicitanteUsuarioId, "Aprobación de Jefe", "Tu solicitud fue aprobada por tu Jefe inmediato. Falta aprobación de Talento Humano.", "/vacaciones/solicitudes");
+        await notify(conn, solicitanteUsuarioId, "Aprobación de Jefe",
+          "Tu solicitud fue aprobada por tu Jefe inmediato. Falta aprobación de Talento Humano.",
+          "/vacaciones/solicitudes");
       }
       const listaRH = await getUsuariosTalentoHumano(conn);
       if (listaRH.length) {
@@ -243,7 +283,7 @@ export async function cambiarEstado(params: {
       return { ok: true };
     }
 
-    // Aprobación por RH/Admin → pasa a Aprobado y notifica
+    /* ===== APROBACIÓN POR RH / ADMIN (Nivel 2) → Aprobado ===== */
     if (aprobadorRolId === ROL_TH || aprobadorRolId === ROL_ADMIN) {
       if (vac.Estado !== "PendienteRH")
         throw new AppError("RH/Admin solo puede aprobar solicitudes en estado PendienteRH");
@@ -267,7 +307,7 @@ export async function cambiarEstado(params: {
         [solicitudId]
       );
 
-      // Sumar días a tomados
+      // Sumar días a tomados del empleado
       const [diasRow]: any = await conn.query(
         `SELECT DATEDIFF(Fecha_Fin, Fecha_Inicio)+1 AS dias FROM vacacion WHERE ID_vacacion=?`,
         [solicitudId]
@@ -297,12 +337,6 @@ export async function cambiarEstado(params: {
   }
 }
 
-function nivelPorRol(rolId:number): number {
-  if (rolId === ROL_JEFE) return 1;
-  if (rolId === ROL_TH || rolId === ROL_ADMIN) return 2;
-  return 0;
-}
-
 /* ===================== Búsqueda por rango ===================== */
 
 export async function buscarPorRango(desde?: string, hasta?: string) {
@@ -322,7 +356,7 @@ export async function buscarPorRango(desde?: string, hasta?: string) {
   return rows;
 }
 
-/* ===================== Obtener saldo Vacaciones ===================== */
+/* ===================== Obtener saldo Vacaciones (vista) ===================== */
 export async function obtenerSaldo(empleadoId: number) {
   const empId = Number(empleadoId);
   if (!Number.isFinite(empId) || empId <= 0) {
@@ -336,7 +370,7 @@ export async function obtenerSaldo(empleadoId: number) {
       anuales,
       acumulado,
       tomados,
-      pendientes,   
+      pendientes,
       disponibles
     FROM vw_vacaciones_disponibles_simple
     WHERE ID_Empleado = ?
@@ -347,10 +381,10 @@ export async function obtenerSaldo(empleadoId: number) {
   if (!rows.length) return null;
   return rows[0] as {
     anios_laborando: number;
-    anuales: number;       // días por año
-    acumulado: number;     // años * anuales
-    tomados: number;       // gozados
-    pendientes: number;    // 0 en esta vista
-    disponibles: number;   // acumulado - tomados
+    anuales: number;
+    acumulado: number;
+    tomados: number;
+    pendientes: number;
+    disponibles: number;
   };
 }

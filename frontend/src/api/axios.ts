@@ -18,10 +18,12 @@ api.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error?.response?.status === 401 || error?.response?.status === 403) {
-      window.location.href = '/dashboard';
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }
 );
 
 export default api;
+// 8.33333 
+// (meses trabajados / 12 meses) * 15 días

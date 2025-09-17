@@ -6,7 +6,7 @@ export interface Vacacion {
     Fecha_Inicio: string;
     Fecha_Fin: string;
     Dias_Solicitados: number;
-    Estado: 'Pendiente' | 'Aprobado' | 'Rechazado';
+    Estado: 'Pendiente' | 'PendienteRH' | 'Aprobado' | 'Rechazado';
     Motivo?: string;
     Fecha_Solicitud_Format?: string;
     Fecha_Inicio_Format?: string;

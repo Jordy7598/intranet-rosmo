@@ -30,4 +30,4 @@ export const detalle = (id: number) => api.get<Vacacion>(`/vacaciones/${id}`);
 export const aprobar = (id: number, comentario?: string) => api.post(`/vacaciones/${id}/aprobar`, { comentario });
 export const rechazar = (id: number, motivo: string) => api.post(`/vacaciones/${id}/rechazar`, { motivo });
 export const rango = (desde?: string, hasta?: string) =>
-  api.get<Vacacion[]>("/vacaciones", { params: { desde, hasta } });
+  api.get<Vacacion[]>("/vacaciones/buscar", { params: { desde, hasta } });
