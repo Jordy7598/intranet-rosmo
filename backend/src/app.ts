@@ -14,6 +14,8 @@ import noticiaRoutes from "./routes/noticia.routes";
 import interactionRoutes from "./routes/interaccionnoticia.routes";
 import notificationRoutes from "./routes/notificacion.routes";
 import vacacionesRoutes from "./routes/vacaciones.routes";
+import solicitudRoutes from "./routes/solicitud.routes";
+
 
 dotenv.config();
 
@@ -36,6 +38,9 @@ app.use("/api/noticias", noticiaRoutes);
 app.use('/api/interactions', interactionRoutes);
 app .use("/api/notificaciones", notificationRoutes);
 app.use("/api/vacaciones", vacacionesRoutes);
+app.use("/api/solicitudes", solicitudRoutes);
+
+
 
 
 app.get("/", (_req, res) => {

@@ -98,7 +98,7 @@ export const deleteNoticia = async (req: Request, res: Response) => {
   }
 };*/
 
-// src/controllers/noticia.controller.ts (ACTUALIZADO)
+// src/controllers/noticia.controller.ts
 import { Request, Response } from "express";
 import { pool } from "../config/db";
 

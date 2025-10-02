@@ -1,5 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import "./styles/centro.css";
 import Login from './pages/Principales/Login';
 import Dashboard from './pages/Principales/Dashboard';
 import CrearEmpleado from './pages/Empleado/CrearEmpleado';
@@ -18,7 +19,15 @@ import Solicitudes from './pages/Vacaciones/Solicitudes';
 import CrearVacacion from './pages/Vacaciones/Crear';
 import Historial from './pages/Vacaciones/Historial';
 import AprobarVacaciones from './pages/Vacaciones/Aprobar';
-
+import CrearCarta from './pages/Requerimientos/CrearCarta';
+import CrearBoleta from './pages/Requerimientos/CrearBoleta';
+import CrearSalida from './pages/Requerimientos/CrearSalida';
+import MisSolicitudes from './pages/Requerimientos/MisSolicitudes';
+import Pendientes from './pages/Requerimientos/Pendientes';
+import DetalleSolicitud from './pages/Requerimientos/DetalleSolicitud';
+import AlmuerzoLista from './pages/Requerimientos/AlmuerzoLista';
+import SolicitudIndex from './pages/Requerimientos/Index'
+import CrearAlmuerzo from './pages/Requerimientos/CrearAlmuerzo';
 
 
 
@@ -56,6 +65,19 @@ function App() {
       <Route path="/vacaciones/crear" element={<CrearVacacion />} />
       <Route path="/vacaciones/historial" element={<Historial />} />
       <Route path="/vacaciones/aprobar" element={<AprobarVacaciones />} />
+      <Route path="/requerimientos" element={<SolicitudIndex />} />
+      <Route path="/requerimientos/crear-carta" element={<CrearCarta />} />
+      <Route path="/requerimientos/crear-boleta" element={<CrearBoleta />} />
+      <Route path="/requerimientos/crear-salida" element={<CrearSalida />} />
+      <Route path="/requerimientos/mis-solicitudes" element={<MisSolicitudes />} />
+      <Route path="/requerimientos/pendientes" element={<Pendientes />} />
+      <Route path="/requerimientos/almuerzo-lista" element={<AlmuerzoLista />} />
+      <Route path="/requerimientos/detalle/:id" element={<DetalleSolicitud />} />
+      <Route path="/requerimientos/crear-almuerzo" element={<CrearAlmuerzo />} />
+
+      <Route path="/centro" element={<SolicitudIndex />} />
+      ";
+
 
 
     </Routes>

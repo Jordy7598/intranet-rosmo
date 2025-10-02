@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
-import { rango, aprobar, rechazar } from "./vacaciones.api";
-import type { Vacacion } from "./vacaciones.api";
+import { rango, aprobar, rechazar } from "../../api/vacaciones.api";
+import type { Vacacion } from "../../api/vacaciones.api";
 
 export default function AprobarVacaciones() {
   const [desde, setDesde] = useState("");

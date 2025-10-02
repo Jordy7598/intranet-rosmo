@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { crear } from "./vacaciones.api";
+import { crear } from "../../api/vacaciones.api";
 import { useNavigate } from "react-router-dom";
 
 export default function CrearVacacion() {

@@ -17,9 +17,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error?.response?.status === 401 || error?.response?.status === 403) {
+    if (error?.response?.status === 401) {
+      // Solo para 401 (no autenticado) limpiar y redirigir
+      localStorage.removeItem('token');
+      localStorage.removeItem('usuario_nombre');
+      localStorage.removeItem('usuario_rol');
       window.location.href = '/';
     }
+    // Para 403 (sin permisos) no redirigir, dejar que el componente maneje el error
     return Promise.reject(error);
   }
 );

@@ -1,0 +1,64 @@
+:root{
+  --bg: #ffffff;
+  --fg: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --primary: #2563eb;
+  --primary-600:#2563eb;
+  --primary-700:#1d4ed8;
+  --danger: #dc2626;
+  --danger-700:#b91c1c;
+  --warn: #d97706;
+  --ok: #16a34a;
+  --card: #ffffff;
+  --card-shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.06);
+  --radius: 12px;
+}
+
+*{box-sizing:border-box}
+.btn{
+  appearance:none; border:1px solid transparent; background:var(--primary);
+  color:#fff; padding:.6rem .9rem; border-radius: var(--radius);
+  font-weight:600; cursor:pointer; transition:filter .15s ease, background .15s ease;
+}
+.btn:hover{ filter:brightness(.95) }
+.btn:disabled{ opacity:.6; cursor:not-allowed }
+
+.btn-outline{
+  background:#fff; border:1px solid var(--line); color:var(--fg);
+}
+.btn-outline:hover{ background:#f9fafb }
+
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow: var(--card-shadow); padding:1rem;
+}
+.card h3{ margin:0 0 .25rem 0; font-weight:700; }
+.card p{ margin:.25rem 0; color:var(--muted) }
+
+.grid{
+  display:grid; gap:1rem;
+}
+.grid-2{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+.grid-3{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+@media (max-width: 960px){ .grid-3{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 640px){ .grid-2,.grid-3{ grid-template-columns: 1fr; } }
+
+.badge{
+  display:inline-block; padding:.15rem .5rem; border-radius:999px; font-size:.75rem; font-weight:600;
+}
+.badge-pend{ background:#f3f4f6; color:#374151; }
+.badge-rh{ background:#fff7ed; color:#b45309; }
+.badge-ok{ background:#ecfdf5; color:#065f46; }
+.badge-err{ background:#fef2f2; color:#991b1b; }
+.badge-info{ background:#eff6ff; color:#1d4ed8; }
+
+.table{ width:100%; border-collapse:collapse; }
+.table th, .table td{ border-bottom:1px solid var(--line); padding:.6rem; text-align:left; }
+.table thead th{ background:#f9fafb; font-size:.9rem; color:#374151; }
+.table tr:hover td{ background:#fafafa; }
+
+.input, .select, .textarea{
+  width:100%; border:1px solid var(--line); background:#fff; color:var(--fg);
+  border-radius:10px; padding:.55rem .7rem;
+}

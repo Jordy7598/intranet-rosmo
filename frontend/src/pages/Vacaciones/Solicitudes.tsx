@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { mis } from "./vacaciones.api";
-import type { Vacacion } from "./vacaciones.api";
+import { mis } from "../../api/vacaciones.api";
+import type { Vacacion } from "../../api/vacaciones.api";
 
 export default function Solicitudes() {
   const [data, setData] = useState<Vacacion[]>([]);
