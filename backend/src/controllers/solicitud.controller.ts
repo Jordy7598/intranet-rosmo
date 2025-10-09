@@ -279,15 +279,15 @@ export const crearSalidaAnticipada = async (req: Request, res: Response) => {
       return res.status(400).json({ ok: false, message: "motivo, fecha_inicio y fecha_fin son requeridos" });
     }
 
-    const [cmp]: any = await pool.query(`SELECT TIMESTAMP(?) <= TIMESTAMP(?) AS ok`, [fecha_inicio, fecha_fin]);
+    /*const [cmp]: any = await pool.query(`SELECT TIMESTAMP(?) <= TIMESTAMP(?) AS ok`, [fecha_inicio, fecha_fin]);
     if (!cmp[0]?.ok) {
       return res.status(400).json({ ok: false, message: "fecha_fin debe ser mayor o igual a fecha_inicio" });
-    }
+    }*/
 
     await pool.query(
       `INSERT INTO Solicitud (ID_Usuario, Tipo, Detalle, Estado, Fecha_Creacion, Motivo, Fecha_Inicio, Fecha_Fin)
        VALUES (?, 'SALIDA', ?, 'Pendiente', NOW(), ?, ?, ?)`,
-      [userId, "Salida anticipada", motivo, fecha_inicio, fecha_fin]
+      [userId, "Salida anticipada", motivo, fecha_inicio, fecha_inicio]
     );
 
     // Notificar a JEFE (si existe) o a todos los rol JEFE

@@ -4,7 +4,7 @@ import { verifyToken, authorizeRoles } from "../middlewares/auth.middlewares";
 
 const router = Router();
 
-// Aplica verifyToken a TODAS las rutas
+
 router.use(verifyToken);
 
 router.get("/", getNoticias);

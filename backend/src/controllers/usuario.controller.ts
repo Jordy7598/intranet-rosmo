@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 // Obtener todos los usuarios
 export const getUsuarios = async (_req: Request, res: Response) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM Usuario");
+    const [rows] = await pool.query("SELECT *,r.Nombre_Rol FROM Usuario u LEFT JOIN Rol r ON u.ID_Rol=r.ID_Rol");
     res.json(rows);
   } catch (error) {
     console.error(error);

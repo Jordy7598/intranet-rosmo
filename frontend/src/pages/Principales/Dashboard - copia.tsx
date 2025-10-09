@@ -200,13 +200,13 @@ function Dashboard() {
                 </div>
                 {requerimientosSubmenuOpen && (
                   <div className="submenu">
-                    {/*<Link
+                    <Link
                       to="/requerimientos"
                       className={`submenu-item ${location.pathname === "/requerimientos" ? "active" : ""}`}
                     >
                       <span className="submenu-icon">🏠</span>
                       Inicio Centro
-                    </Link>*/}
+                    </Link>
                     <Link
                       to="/requerimientos/crear-carta"
                       className={`submenu-item ${

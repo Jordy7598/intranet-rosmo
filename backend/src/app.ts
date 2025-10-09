@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pingRoutes from "./routes/ping.routes";
 import { pool } from './config/db';
+import path from "path";
+import uploadsRoute from "./routes/uploads";
 import rolRoutes from "./routes/rol.routes";
 import authRoutes from './routes/auth.routes';
 import usuarioRoutes from "./routes/usuario.routes";
@@ -36,9 +38,11 @@ app.use('/api/puestos', puestoRoutes);
 app.use("/api/departamentos", departamentoRoutes);
 app.use("/api/noticias", noticiaRoutes);
 app.use('/api/interactions', interactionRoutes);
-app .use("/api/notificaciones", notificationRoutes);
+app.use("/api/notificaciones", notificationRoutes);
 app.use("/api/vacaciones", vacacionesRoutes);
 app.use("/api/solicitudes", solicitudRoutes);
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use("/api/uploads", uploadsRoute);
 
 
 

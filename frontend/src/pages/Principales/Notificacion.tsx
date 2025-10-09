@@ -1,3 +1,4 @@
+//src/pages/Principales/Notificacion.tsx
 import React, { useEffect, useState, useRef } from "react";
 import { Bell, X, Check, CheckCheck, Trash2, Calendar, FileText, MessageCircle, Image, BarChart3, User } from "lucide-react";
 

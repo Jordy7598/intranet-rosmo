@@ -11,7 +11,7 @@ export default function AprobarVacaciones() {
   const [msg, setMsg] = useState<string | null>(null);
 
   const rol = useMemo(() => Number(localStorage.getItem("usuario_rol") || 0), []);
-  const puede = [1,2,3].includes(rol); // Admin=1, Talento Humano=2, Jefe=3 (ajusta si tus IDs difieren)
+  const puede = [1,2,3].includes(rol);
 
   const buscar = async () => {
     setLoading(true);
