@@ -61,6 +61,9 @@ export default function VerNoticia() {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
 
+  const rol = Number(localStorage.getItem("usuario_rol"));
+  const puedePublicar = [1, 2, 3, 5].includes(rol);
+
   useEffect(() => {
     const cargar = async () => {
       try {
@@ -140,7 +143,10 @@ export default function VerNoticia() {
             <h1 className="detail-title">{noticia.Titulo}</h1>
             <div className="detail-actions">
               <Link to="/noticias" className="btn btn-ghost">Volver</Link>
-              <Link to={`/noticias/editar/${noticia.ID_Noticia}`} className="btn btn-warn">Editar</Link>
+              {puedePublicar && (
+                <Link to={`/noticias/editar/${noticia.ID_Noticia}`} className="btn btn-warn">Editar</Link>
+              )}
+              
             </div>
           </div>
 

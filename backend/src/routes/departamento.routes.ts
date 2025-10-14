@@ -4,7 +4,8 @@ import { verifyToken } from "../middlewares/auth.middlewares";
 
 const router = Router();
 
-router.use(verifyToken); // proteger rutas
+router.use(verifyToken);
+
 router.get("/", getDepartamentos);
 
 export default router;

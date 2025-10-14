@@ -36,6 +36,12 @@ import DetalleSolicitud from './pages/Requerimientos/DetalleSolicitud';
 import AlmuerzoListaPrint from './pages/Requerimientos/AlmuerzoListaPrint';
 import AlmuerzoLista from './pages/Requerimientos/AlmuerzoLista';
 
+import DirectorioLista from "./pages/Directorio/DirectorioLista";
+import DirectorioDetalle from "./pages/Directorio/DirectorioDetalle";
+
+import Calendario from './pages/Calendario/Calendario';
+
+
 function App() {
   return (
     <Router>
@@ -87,6 +93,13 @@ function App() {
           <Route path="requerimientos/pendientes" element={<Pendientes />} />
           <Route path="requerimientos/detalle/:id" element={<DetalleSolicitud />} />
           <Route path="requerimientos/almuerzo-lista" element={<AlmuerzoLista />} />
+
+          {/* Directorio */}
+          <Route path="/directorio" element={<DirectorioLista />} />
+          <Route path="/directorio/:id" element={<DirectorioDetalle />} />
+
+          {/* Calendario */}
+          <Route path="calendario" element={<Calendario />} />
 
           <Route path="centro" element={<SolicitudIndex />} />
         </Route>

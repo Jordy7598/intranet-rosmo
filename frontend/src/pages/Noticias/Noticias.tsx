@@ -56,6 +56,8 @@ const ListaNoticias = () => {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [likesStatus, setLikesStatus] = useState<{ [key: number]: boolean }>({});
   const token = localStorage.getItem("token");
+  const rol = Number(localStorage.getItem("usuario_rol"));
+  const puedePublicar = [1, 2, 3, 5].includes(rol);
 
   useEffect(() => {
     const fetchNoticias = async () => {
@@ -88,6 +90,8 @@ const ListaNoticias = () => {
 
     fetchNoticias();
   }, [token]);
+
+  
 
   const handleLike = async (noticiaId: number) => {
     if (!token) {
@@ -156,13 +160,15 @@ const ListaNoticias = () => {
               <h1 className="page-title">Feed de Noticias</h1>
               <p className="page-subtitle">Mantente al día con las últimas novedades del equipo</p>
             </div>
-            <Link to="/noticias/nueva" className="btn-create">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Crear Publicación
-            </Link>
+            {puedePublicar && (
+              <Link to="/noticias/nueva" className="btn-create">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Crear Publicación
+              </Link>
+            )}
           </div>
         </header>
 
@@ -176,9 +182,11 @@ const ListaNoticias = () => {
               </div>
               <h3>No hay publicaciones aún</h3>
               <p>Sé el primero en compartir novedades con el equipo</p>
-              <Link to="/noticias/nueva" className="btn-create-alt">
-                Crear primera publicación
-              </Link>
+              {puedePublicar && (
+                <Link to="/noticias/nueva" className="btn-create-alt">
+                  Crear primera publicación
+                </Link>
+              )}
             </div>
           ) : (
             <div className="feed-list">
@@ -202,11 +210,13 @@ const ListaNoticias = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="post-actions-menu">
-                      <Link to={`/noticias/editar/${noticia.ID_Noticia}`} className="btn-edit">
-                        Editar
-                      </Link>
-                    </div>
+                    {puedePublicar && (
+                      <div className="post-actions-menu">
+                        <Link to={`/noticias/editar/${noticia.ID_Noticia}`} className="btn-edit">
+                          Editar
+                        </Link>
+                      </div>
+                    )}
                   </div>
 
                   <div className="post-content">

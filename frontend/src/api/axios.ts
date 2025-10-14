@@ -18,7 +18,7 @@ api.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error?.response?.status === 401) {
-      // Solo para 401 (no autenticado) limpiar y redirigir
+      
       localStorage.removeItem('token');
       localStorage.removeItem('usuario_nombre');
       localStorage.removeItem('usuario_rol');

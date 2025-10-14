@@ -17,6 +17,8 @@ import interactionRoutes from "./routes/interaccionnoticia.routes";
 import notificationRoutes from "./routes/notificacion.routes";
 import vacacionesRoutes from "./routes/vacaciones.routes";
 import solicitudRoutes from "./routes/solicitud.routes";
+import directorioRouter from "./routes/directorio.routes";
+import calendarioRoutes from "./routes/calendario.routes";
 
 
 dotenv.config();
@@ -43,6 +45,8 @@ app.use("/api/vacaciones", vacacionesRoutes);
 app.use("/api/solicitudes", solicitudRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/api/uploads", uploadsRoute);
+app.use("/api/directorio", directorioRouter);
+app.use("/api/calendario", calendarioRoutes);
 
 
 

@@ -5,10 +5,10 @@ import * as vacacionesCtrl from "../controllers/vacacion.controller";
 const router = Router();
 
 // Empleado: crea y ve sus solicitudes
-router.post("/", verifyToken, authorizeRoles(1,2,3,4), vacacionesCtrl.crearSolicitud);
+router.post("/", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.crearSolicitud);
 router.get("/mias", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.misSolicitudes);
 
-// Rutas de SALDO - estas DEBEN venir ANTES de la ruta /:id
+// Rutas de SALDO
 router.get("/saldo", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.saldoActual);
 router.get("/saldo/:empleadoId", verifyToken, authorizeRoles(1,2,3), vacacionesCtrl.saldoPorEmpleado);
 
@@ -19,8 +19,6 @@ router.get("/empleado/:empleadoId", verifyToken, authorizeRoles(1,2,3), vacacion
 router.get("/buscar", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.buscarPorRango);
 router.get("/", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.buscarPorRango);
 
-
-// Las rutas parametrizadas van al final
 router.get("/:id", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.detalleSolicitud);
 
 // Gestión (Jefe, Talento Humano, Admin)
