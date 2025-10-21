@@ -12,7 +12,7 @@ router.get("/mias", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.misSo
 router.get("/saldo", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.saldoActual);
 router.get("/saldo/:empleadoId", verifyToken, authorizeRoles(1,2,3), vacacionesCtrl.saldoPorEmpleado);
 
-// Consulta por empleado (Jefe, TH, Admin)
+// Consulta por empleado 
 router.get("/empleado/:empleadoId", verifyToken, authorizeRoles(1,2,3), vacacionesCtrl.solicitudesPorEmpleado);
 
 // Búsqueda por rango - para calendario/mes

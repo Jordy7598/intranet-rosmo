@@ -22,7 +22,15 @@ import calendarioRoutes from "./routes/calendario.routes";
 
 
 dotenv.config();
-
+const mask = (s?: string) => s ? s[0] + '*'.repeat(Math.max(s.length-2,0)) + s.slice(-1) : s;
+console.log('[ENV CHECK]', {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  passLen: process.env.DB_PASSWORD?.length,
+  passMasked: mask(process.env.DB_PASSWORD),
+  db: process.env.DB_NAME
+});
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
