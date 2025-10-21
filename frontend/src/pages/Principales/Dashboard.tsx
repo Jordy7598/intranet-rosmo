@@ -112,7 +112,6 @@ function Dashboard() {
               <span className="logo-icon">
                 <img src="/ROSMO.png" alt="Logo R" className="logo-img" />
               </span>
-              <span className="logo-text">somosrosmo.com</span>
             </div>
             <nav className="breadcrumb">
               <Link to="/dashboard">Inicio</Link>
@@ -121,6 +120,7 @@ function Dashboard() {
 
           <div className="header-right">
             {/* Acciones rápidas (solo 1 y 2) */}
+            <span className="logo-text">somosrosmo.com</span>
             {esAdminTH && (
               <div className="relative" ref={accionesRef}>
                 <button
@@ -245,9 +245,9 @@ function Dashboard() {
               <Link to="/noticias" className="nav-item">
                 <span className="nav-icon">📰</span> Noticias
               </Link>
-              <Link to="/galeria" className="nav-item">
+              {/*<Link to="/galeria" className="nav-item">
                 <span className="nav-icon">🖼</span> Galería
-              </Link>
+              </Link>*/}
 
               {/* Centro de requerimientos */}
               <div className="nav-item-container">
@@ -287,12 +287,12 @@ function Dashboard() {
                 )}
               </div>
 
-              <Link to="/archivos" className="nav-item">
+              {/*<Link to="/archivos" className="nav-item">
                 <span className="nav-icon">📂</span> Archivos corporativos
               </Link>
               <Link to="/encuestas" className="nav-item">
                 <span className="nav-icon">📋</span> Encuestas
-              </Link>
+              </Link>*/}
               <Link to="/informacion" className="nav-item">
                 <span className="nav-icon">ℹ️</span> Información
               </Link>

@@ -40,7 +40,11 @@ import DirectorioLista from "./pages/Directorio/DirectorioLista";
 import DirectorioDetalle from "./pages/Directorio/DirectorioDetalle";
 
 import Calendario from './pages/Calendario/Calendario';
-
+import GuiaIntranet from "./pages/Informacion/GuiaIntranet";
+import Informacion from "./pages/Informacion/info";
+import Galeria from "./pages/Galeria/Galeria";
+import ArchivosCorporativos  from './pages/ArchivosCorporativos/ArchivosCorporativos';
+import Encuestas from './pages/Encuestas/Encuestas';
 
 function App() {
   return (
@@ -102,6 +106,12 @@ function App() {
           <Route path="calendario" element={<Calendario />} />
 
           <Route path="centro" element={<SolicitudIndex />} />
+          <Route path="/info/guia" element={<GuiaIntranet />} />
+          <Route path="informacion" element={<Informacion />} />
+          <Route path="galeria" element={<Galeria />} />
+          <Route path="archivos" element={<ArchivosCorporativos />} />
+          <Route path="encuestas" element={<Encuestas />} />
+
         </Route>
       </Routes>
     </Router>

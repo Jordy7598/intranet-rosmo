@@ -12,7 +12,6 @@ async function safeQuery<T = any>(label: string, sql: string, params: any[] = []
 }
 
 export async function getSummary(req: Request, res: Response) {
-  // ====== QUERIES AJUSTADAS A TU ESQUEMA REAL ======
   // Top 5 por likes (like_noticia) y destacado
   const qTopLikes = `
     SELECT n.ID_Noticia,

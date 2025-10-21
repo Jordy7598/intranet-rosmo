@@ -191,9 +191,7 @@ const MiPerfil = () => {
                 }
               />
             </div>
-            <p style={{ marginTop: 10, color: "#888", fontSize: 13 }}>
-              * Los saldos “en vivo” se muestran arriba (Anuales/Tomados/Pendientes/Disponibles).
-            </p>
+            
           </div>
         </div>
       </div>

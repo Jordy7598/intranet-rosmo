@@ -24,7 +24,6 @@ api.interceptors.response.use(
       localStorage.removeItem('usuario_rol');
       window.location.href = '/';
     }
-    // Para 403 (sin permisos) no redirigir, dejar que el componente maneje el error
     return Promise.reject(error);
   }
 );
