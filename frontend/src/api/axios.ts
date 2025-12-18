@@ -30,7 +30,7 @@ api.interceptors.response.use(
 
 export default api;
 // 8.33333 
-// (meses trabajados / 12 meses) * 15 días*/ 
+// (meses trabajados / 12 meses) * 15 días*/
 import axios from "axios";
 
 // 1) Usa variable de entorno de Vite si existe; si no, usa '/api' (Nginx proxy)
@@ -55,7 +55,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error?.response?.status === 401) {
+    // Evitar redirigir en el intento de login para poder mostrar el mensaje de error
+    const reqUrl: string | undefined = error?.config?.url;
+    const isLoginAttempt = !!reqUrl && reqUrl.includes('/login');
+
+    if (error?.response?.status === 401 && !isLoginAttempt) {
       localStorage.removeItem("token");
       localStorage.removeItem("usuario_nombre");
       localStorage.removeItem("usuario_rol");

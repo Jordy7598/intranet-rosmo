@@ -55,6 +55,7 @@ function CommentIcon() {
 const ListaNoticias = () => {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [likesStatus, setLikesStatus] = useState<{ [key: number]: boolean }>({});
+  const [menuAbierto, setMenuAbierto] = useState<number | null>(null);
   const token = localStorage.getItem("token");
   const rol = Number(localStorage.getItem("usuario_rol"));
   const puedePublicar = [1, 2, 3, 5].includes(rol);
@@ -91,7 +92,19 @@ const ListaNoticias = () => {
     fetchNoticias();
   }, [token]);
 
-  
+  // Cerrar menú al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (menuAbierto !== null) {
+        setMenuAbierto(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [menuAbierto]);
+
+
 
   const handleLike = async (noticiaId: number) => {
     if (!token) {
@@ -112,11 +125,11 @@ const ListaNoticias = () => {
         prev.map((n) =>
           n.ID_Noticia === noticiaId
             ? {
-                ...n,
-                total_likes: liked
-                  ? n.total_likes + 1
-                  : Math.max(0, n.total_likes - 1),
-              }
+              ...n,
+              total_likes: liked
+                ? n.total_likes + 1
+                : Math.max(0, n.total_likes - 1),
+            }
             : n
         )
       );
@@ -125,27 +138,56 @@ const ListaNoticias = () => {
     }
   };
 
+  const handleDelete = async (noticiaId: number, titulo: string) => {
+    if (!token) {
+      alert("Debes iniciar sesión");
+      return;
+    }
+
+    if (!confirm(`¿Estás seguro de eliminar la noticia "${titulo}"?\n\nEsta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      await api.delete(`/noticias/${noticiaId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setNoticias((prev) => prev.filter((n) => n.ID_Noticia !== noticiaId));
+      setMenuAbierto(null);
+      alert("✅ Noticia eliminada correctamente");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error("Error al eliminar noticia:", error);
+      alert(error.response?.data?.message || "Error al eliminar la noticia");
+    }
+  };
+
+  const toggleMenu = (noticiaId: number) => {
+    setMenuAbierto(menuAbierto === noticiaId ? null : noticiaId);
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    
+
     // Comparar solo las fechas (sin horas)
     const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const diffTime = nowOnly.getTime() - dateOnly.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    const timeStr = date.toLocaleTimeString("es-ES", { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    const timeStr = date.toLocaleTimeString("es-ES", {
+      hour: '2-digit',
+      minute: '2-digit'
     });
 
     if (diffDays === 0) return `Hoy a las ${timeStr}`;
     if (diffDays === 1) return `Ayer a las ${timeStr}`;
     if (diffDays < 7) return `Hace ${diffDays} días a las ${timeStr}`;
-    
-    return date.toLocaleDateString("es-ES", { 
-      day: 'numeric', 
+
+    return date.toLocaleDateString("es-ES", {
+      day: 'numeric',
       month: 'short',
       year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
     }) + ` a las ${timeStr}`;
@@ -212,16 +254,55 @@ const ListaNoticias = () => {
                     </div>
                     {puedePublicar && (
                       <div className="post-actions-menu">
-                        <Link to={`/noticias/editar/${noticia.ID_Noticia}`} className="btn-edit">
-                          Editar
-                        </Link>
+                        <button 
+                          className="btn-menu-dots"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleMenu(noticia.ID_Noticia);
+                          }}
+                          title="Más opciones"
+                          aria-label="Menú de opciones"
+                        >
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                            <circle cx="12" cy="5" r="2.5" />
+                            <circle cx="12" cy="12" r="2.5" />
+                            <circle cx="12" cy="19" r="2.5" />
+                          </svg>
+                        </button>
+                        {menuAbierto === noticia.ID_Noticia && (
+                          <div className="dropdown-menu">
+                            <Link 
+                              to={`/noticias/editar/${noticia.ID_Noticia}`} 
+                              className="dropdown-item"
+                              onClick={() => setMenuAbierto(null)}
+                            >
+                              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                              </svg>
+                              Editar
+                            </Link>
+                            <button 
+                              onClick={() => handleDelete(noticia.ID_Noticia, noticia.Titulo)} 
+                              className="dropdown-item dropdown-item-danger"
+                            >
+                              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                <line x1="10" y1="11" x2="10" y2="17" />
+                                <line x1="14" y1="11" x2="14" y2="17" />
+                              </svg>
+                              Eliminar
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
 
                   <div className="post-content">
                     <h2 className="post-title">{noticia.Titulo}</h2>
-                    
+
                     <p className="post-body">
                       {noticia.Cuerpo.length > 300
                         ? noticia.Cuerpo.substring(0, 300) + "..."
@@ -232,7 +313,7 @@ const ListaNoticias = () => {
                       <div className="post-image-container">
                         <img
                           className="post-image"
-                          src={`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${noticia.Imagen_Principal}`}
+                          src={`${import.meta.env.VITE_API_URL_Images || 'http://localhost:3000'}${noticia.Imagen_Principal}`}
                           alt={noticia.Titulo}
                           loading="lazy"
                           onError={(e) => {
@@ -492,8 +573,97 @@ const ListaNoticias = () => {
         }
 
         .post-actions-menu {
+          position: relative;
+        }
+
+        .btn-menu-dots {
+          width: 36px;
+          height: 36px;
           display: flex;
-          gap: 8px;
+          align-items: center;
+          justify-content: center;
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: 50%;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: all 0.2s;
+          padding: 0;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-menu-dots:hover {
+          background: var(--border-light);
+          border-color: #d1d5db;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-menu-dots svg {
+          display: block;
+          opacity: 0.8;
+        }
+
+        .btn-menu-dots:hover svg {
+          opacity: 1;
+        }
+
+        .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          margin-top: 4px;
+          background: white;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          box-shadow: var(--shadow-md);
+          min-width: 160px;
+          z-index: 1000;
+          overflow: hidden;
+          animation: slideDown 0.2s ease;
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 16px;
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-primary);
+          background: transparent;
+          border: none;
+          width: 100%;
+          text-align: left;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+          background: var(--border-light);
+        }
+
+        .dropdown-item svg {
+          display: block;
+        }
+
+        .dropdown-item-danger {
+          color: #dc3545;
+        }
+
+        .dropdown-item-danger:hover {
+          background: #fee;
         }
 
         .btn-edit {
@@ -506,11 +676,42 @@ const ListaNoticias = () => {
           border-radius: 8px;
           text-decoration: none;
           transition: all 0.2s;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
         }
 
         .btn-edit:hover {
           background: var(--border-light);
           color: var(--text-primary);
+        }
+
+        .btn-edit svg {
+          display: block;
+        }
+
+        .btn-delete {
+          padding: 6px 14px;
+          font-size: 13px;
+          font-weight: 600;
+          color: #dc3545;
+          background: transparent;
+          border: 1px solid #dc3545;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .btn-delete:hover {
+          background: #dc3545;
+          color: white;
+        }
+
+        .btn-delete svg {
+          display: block;
         }
 
         /* Post Content */

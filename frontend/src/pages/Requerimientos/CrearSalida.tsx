@@ -148,6 +148,7 @@ export default function CrearSalida() {
         *{box-sizing:border-box}
         .req-shell{
           display:flex; flex-direction:column; gap:16px;
+          font-family: 'Inter', sans-serif;
         }
         .req-header{
           background:var(--card);

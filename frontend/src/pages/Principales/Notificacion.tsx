@@ -24,19 +24,19 @@ interface NotificationSystemProps {
   eliminarNotificacion?: (id: number) => Promise<void>;
 }
 
-const NotificationSystem: React.FC<NotificationSystemProps> = ({ 
+const NotificationSystem: React.FC<NotificationSystemProps> = ({
   useNotificaciones,
-  eliminarNotificacion 
+  eliminarNotificacion
 }) => {
-  const { 
-    notificaciones, 
-    contador, 
-    loading, 
-    marcarTodasComoLeidas, 
-    marcarComoLeida, 
-    fetchNotificaciones 
+  const {
+    notificaciones,
+    contador,
+    loading,
+    marcarTodasComoLeidas,
+    marcarComoLeida,
+    fetchNotificaciones
   } = useNotificaciones();
-  
+
   const [mostrarPanel, setMostrarPanel] = useState(false);
   const [soloNoLeidas, setSoloNoLeidas] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -84,7 +84,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
   };
 
   // Filtrar notificaciones
-  const notificacionesFiltradas = soloNoLeidas 
+  const notificacionesFiltradas = soloNoLeidas
     ? notificaciones.filter(n => !n.Leido)
     : notificaciones;
 
@@ -127,12 +127,12 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
     if (!notificacion.Leido) {
       await marcarComoLeida(notificacion.ID_Notificacion);
     }
-    
+
     if (notificacion.Link_Destino) {
       // Aquí podrías usar React Router si lo tienes configurado
       window.location.href = notificacion.Link_Destino;
     }
-    
+
     setMostrarPanel(false);
   };
 
@@ -159,7 +159,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
       >
         <Bell size={20} />
         {contador > 0 && (
-          <span 
+          <span
             className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs px-1 min-w-5 h-5 flex items-center justify-center font-medium"
             style={{
               fontSize: '11px',
@@ -174,7 +174,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
 
       {/* Panel de notificaciones */}
       {mostrarPanel && (
-        <div 
+        <div
           className="absolute right-0 mt-2 bg-white shadow-lg rounded-lg border border-gray-200 z-50 overflow-hidden"
           style={{
             width: '400px',
@@ -193,17 +193,16 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
                 <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
-            
+
             {/* Controles */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSoloNoLeidas(!soloNoLeidas)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    soloNoLeidas
-                      ? 'bg-red-500 text-white shadow-sm'
-                      : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                  }`}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${soloNoLeidas
+                    ? 'bg-red-500 text-white shadow-sm'
+                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                    }`}
                 >
                   {soloNoLeidas ? 'Ver todas' : 'Solo no leídas'}
                 </button>
@@ -213,7 +212,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
                   </span>
                 )}
               </div>
-              
+
               {contador > 0 && (
                 <button
                   onClick={() => {
@@ -249,9 +248,8 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
               notificacionesFiltradas.map((notificacion) => (
                 <div
                   key={notificacion.ID_Notificacion}
-                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-all cursor-pointer group ${
-                    !notificacion.Leido ? 'bg-red-50 border-l-4 border-l-red-500' : ''
-                  }`}
+                  className={`p-4 border-b border-gray-100 hover:bg-gray-50 transition-all cursor-pointer group ${!notificacion.Leido ? 'bg-red-50 border-l-4 border-l-red-500' : ''
+                    }`}
                   onClick={() => handleNotificationClick(notificacion)}
                 >
                   <div className="flex items-start gap-3">
@@ -263,9 +261,8 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
                     {/* Contenido */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h4 className={`font-semibold text-sm leading-tight ${
-                          !notificacion.Leido ? 'text-gray-900' : 'text-gray-700'
-                        }`}>
+                        <h4 className={`font-semibold text-sm leading-tight ${!notificacion.Leido ? 'text-gray-900' : 'text-gray-700'
+                          }`}>
                           {notificacion.Titulo}
                         </h4>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -277,7 +274,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
                           )}
                         </div>
                       </div>
-                      
+
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
                         {notificacion.Mensaje}
                       </p>
@@ -287,7 +284,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({
                         <span className="text-xs text-gray-500 font-medium px-2 py-1 bg-gray-100 rounded-full">
                           {notificacion.Tipo}
                         </span>
-                        
+
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           {!notificacion.Leido && (
                             <button

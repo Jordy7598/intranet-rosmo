@@ -130,11 +130,11 @@ const ComentariosNoticia = () => {
       setNoticia((prev) =>
         prev
           ? {
-              ...prev,
-              total_likes: liked
-                ? prev.total_likes + 1
-                : Math.max(0, prev.total_likes - 1),
-            }
+            ...prev,
+            total_likes: liked
+              ? prev.total_likes + 1
+              : Math.max(0, prev.total_likes - 1),
+          }
           : prev
       );
     } catch (error) {
@@ -199,9 +199,9 @@ const ComentariosNoticia = () => {
       setNoticia((prev) =>
         prev
           ? {
-              ...prev,
-              total_comentarios: Math.max(0, prev.total_comentarios - 1),
-            }
+            ...prev,
+            total_comentarios: Math.max(0, prev.total_comentarios - 1),
+          }
           : prev
       );
     } finally {
@@ -228,9 +228,9 @@ const ComentariosNoticia = () => {
       setNoticia((prev) =>
         prev
           ? {
-              ...prev,
-              total_comentarios: Math.max(0, prev.total_comentarios - 1),
-            }
+            ...prev,
+            total_comentarios: Math.max(0, prev.total_comentarios - 1),
+          }
           : prev
       );
     } catch (error) {
@@ -324,7 +324,7 @@ const ComentariosNoticia = () => {
           {noticia.Imagen_Principal && (
             <div className="news-image-wrap">
               <img
-                src={`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${noticia.Imagen_Principal}`}
+                src={`${import.meta.env.VITE_API_URL_Images || 'http://localhost:3000'}${noticia.Imagen_Principal}`}
                 alt={noticia.Titulo}
                 className="news-image"
                 loading="lazy"

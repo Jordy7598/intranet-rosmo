@@ -49,3 +49,6 @@ jest-html-reporters-*
 # --- Misc ---
 *.tar.gz
 *.zip
+
+# --- Uploads ---
+uploads/

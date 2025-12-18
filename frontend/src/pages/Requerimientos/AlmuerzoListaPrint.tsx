@@ -32,7 +32,7 @@ export default function AlmuerzoLista() {
         {/* Barra superior: volver */}
         <div className="topbar no-print">
           <Link to="/requerimientos/almuerzo-lista" className="btn-back" aria-label="Regresar al Dashboard">
-            Regresar 
+            Regresar
           </Link>
           <div className="top-actions">
             <button className="alm-btn ghost" onClick={() => { setFecha(""); load(); }}>
@@ -50,7 +50,7 @@ export default function AlmuerzoLista() {
           <div className="header-text">
             <h1 className="title">Lista de Almuerzo</h1>
             <p className="subtitle">
-              Empleados autorizados para salida en horario de almuerzo 
+              Empleados autorizados para salida en horario de almuerzo
             </p>
           </div>
         </header>
@@ -159,7 +159,7 @@ export default function AlmuerzoLista() {
         }
 
         *{box-sizing:border-box}
-        body{color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background: var(--bg);}
+        body{color:var(--text); background: var(--bg); font-family: 'Inter', sans-serif;}
 
         /* Página independiente, centrada */
         .alm-page{

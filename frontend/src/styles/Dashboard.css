@@ -1,0 +1,9 @@
+.icon-red {
+  color: #ef4444; /* Apply red color to all icons */
+}
+
+/* Ensure all icons inherit the .icon-red style */
+.nav-icon,
+.submenu-icon {
+  color: inherit;
+}

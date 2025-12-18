@@ -174,3 +174,34 @@ export async function saldoPorEmpleado(req: Request, res: Response) {
     res.status(e?.statusCode || 500).json({ message: e?.message || "Error al obtener saldo" });
   }
 }
+
+/**
+ * Obtener reporte completo de vacaciones de todos los empleados
+ * Incluye filtros opcionales por departamento y estado
+ */
+export async function obtenerReporteVacaciones(req: Request, res: Response) {
+  try {
+    const { departamento, estado } = req.query;
+    
+    let query = 'SELECT * FROM vw_reporte_vacaciones WHERE 1=1';
+    const params: any[] = [];
+
+    if (departamento) {
+      query += ' AND Nombre_Departamento = ?';
+      params.push(departamento);
+    }
+
+    if (estado) {
+      query += ' AND Estado_Empleado = ?';
+      params.push(estado);
+    }
+
+    query += ' ORDER BY Nombre_Departamento, Apellido, Nombre';
+
+    const [rows] = await pool.query(query, params);
+    res.json(rows);
+  } catch (e: any) {
+    console.error("[obtenerReporteVacaciones] error:", e?.message, e);
+    res.status(500).json({ message: e?.message || "Error al obtener reporte" });
+  }
+}

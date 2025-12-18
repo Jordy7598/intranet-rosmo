@@ -224,6 +224,23 @@ export async function cambiarEstado(params: {
 
     /* ===== RECHAZO (cualquier rol) ===== */
     if (estado === "Rechazado") {
+      // Si estaba previamente aprobado, revertir los días tomados del empleado
+      if (vac.Estado === "Aprobado") {
+        const [diasRow]: any = await conn.query(
+          `SELECT DATEDIFF(Fecha_Fin, Fecha_Inicio)+1 AS dias FROM vacacion WHERE ID_vacacion=?`,
+          [solicitudId]
+        );
+        const dias = Number(diasRow[0]?.dias || 0);
+        if (dias > 0) {
+          await conn.query(
+            `UPDATE empleado 
+               SET Dias_Vacaciones_Tomados = GREATEST(0, IFNULL(Dias_Vacaciones_Tomados,0) - ?) 
+             WHERE ID_Empleado=?`,
+            [dias, vac.ID_Empleado]
+          );
+        }
+      }
+
       await conn.query(
         `UPDATE vacacion SET Estado='Rechazado' WHERE ID_vacacion=?`,
         [solicitudId]

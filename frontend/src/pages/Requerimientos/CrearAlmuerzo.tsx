@@ -184,7 +184,7 @@ export default function CrearAlmuerzo() {
           --radius:14px;
         }
         *{box-sizing:border-box}
-        .req-shell{ display:flex; flex-direction:column; gap:16px; }
+        .req-shell{ display:flex; flex-direction:column; gap:16px; font-family: 'Inter', sans-serif; }
         .req-header{
           background:var(--card);
           border:1px solid var(--border);

@@ -56,7 +56,7 @@ export default function AlmuerzoLista() {
               Limpiar
             </button>
             <button
-              className="alm-btn primary"  onClick={() => window.location.href = "/requerimientos/almuerzo-lista-Print" + (fecha ? `?fecha=${fecha}` : "")}>
+              className="alm-btn primary" onClick={() => window.location.href = "/requerimientos/almuerzo-lista-Print" + (fecha ? `?fecha=${fecha}` : "")}>
               Imprimir
             </button>
           </div>
@@ -147,7 +147,7 @@ export default function AlmuerzoLista() {
           --radius:14px;
         }
         *{box-sizing:border-box}
-        body{color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto, sans-serif}
+        body{color:var(--text); background: var(--bg); font-family: 'Inter', sans-serif;}
 
         .alm-container{
           padding:24px;

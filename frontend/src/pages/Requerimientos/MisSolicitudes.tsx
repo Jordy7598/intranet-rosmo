@@ -97,10 +97,10 @@ function EstadoBadge({ estado }: { estado: string }) {
   const key = (estado || "").toUpperCase();
   const cls =
     key.includes("APROB") ? "ok" :
-    key.includes("RECHAZ") ? "danger" :
-    key.includes("ENTREG") ? "info" :
-    key.includes("PEND")   ? "warn" :
-    "neutral";
+      key.includes("RECHAZ") ? "danger" :
+        key.includes("ENTREG") ? "info" :
+          key.includes("PEND") ? "warn" :
+            "neutral";
 
   // Píldora sobria con borde suave y tipografía regular (consistente)
   return <span className={`badge-ms ${cls}`}>{estado}</span>;
@@ -147,8 +147,8 @@ const css = `
   border-radius:var(--radius);
   box-shadow:var(--shadow);
   padding:20px 22px;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color:var(--text);
+  font-family: 'Inter', sans-serif;
 }
 
 .hdr-ms{

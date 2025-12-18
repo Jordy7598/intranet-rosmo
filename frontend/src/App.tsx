@@ -45,6 +45,8 @@ import Informacion from "./pages/Informacion/info";
 import Galeria from "./pages/Galeria/Galeria";
 import ArchivosCorporativos  from './pages/ArchivosCorporativos/ArchivosCorporativos';
 import Encuestas from './pages/Encuestas/Encuestas';
+import ReporteVacaciones from './pages/Vacaciones/Reporte';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   return (
@@ -52,11 +54,13 @@ function App() {
       <Routes>
         {/* Login fuera del layout */}
         <Route path="/" element={<Login />} />
-        
+
+        {/* Rutas protegidas */}
+        <Route element={<ProtectedRoute />}>
           <Route path="requerimientos/almuerzo-lista-Print" element={<AlmuerzoListaPrint />} />
 
-        {/* Todo lo demás se muestra DENTRO del Dashboard (layout + Outlet) */}
-        <Route path="/" element={<Dashboard />}>
+          {/* Todo lo demás se muestra DENTRO del Dashboard (layout + Outlet) */}
+          <Route path="/" element={<Dashboard />}>
           {/* Home del dashboard (el padre ya pinta el contenido cuando la ruta es /dashboard) */}
           <Route path="dashboard" element={<div />} />
 
@@ -86,6 +90,8 @@ function App() {
           <Route path="vacaciones/crear" element={<CrearVacacion />} />
           <Route path="vacaciones/historial" element={<Historial />} />
           <Route path="vacaciones/aprobar" element={<AprobarVacaciones />} />
+          <Route path="vacaciones/reporte" element={<ReporteVacaciones />} />
+
 
           {/* Centro de Requerimientos */}
           <Route path="requerimientos" element={<SolicitudIndex />} />
@@ -112,6 +118,7 @@ function App() {
           <Route path="archivos" element={<ArchivosCorporativos />} />
           <Route path="encuestas" element={<Encuestas />} />
 
+          </Route>
         </Route>
       </Routes>
     </Router>

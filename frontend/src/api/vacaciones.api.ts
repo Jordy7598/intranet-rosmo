@@ -31,3 +31,28 @@ export const aprobar = (id: number, comentario?: string) => api.post(`/vacacione
 export const rechazar = (id: number, motivo: string) => api.post(`/vacaciones/${id}/rechazar`, { motivo });
 export const rango = (desde?: string, hasta?: string) =>
   api.get<Vacacion[]>("/vacaciones/buscar", { params: { desde, hasta } });
+
+// Reporte de vacaciones
+export interface ReporteVacacion {
+  ID_Empleado: number;
+  Nombre_Completo: string;
+  Nombre: string;
+  Apellido: string;
+  Nombre_Departamento: string;
+  Nombre_Puesto: string;
+  Fecha_Contratacion: string;
+  Estado_Empleado: string;
+  Dias_Anuales: number;
+  Dias_Tomados: number;
+  Dias_Pendientes: number;
+  Dias_Disponibles: number;
+  Anios_Laborados: number;
+  Meses_Laborados: number;
+  Meses_Totales: number;
+  Dias_Acumulados_Proporcional: number;
+}
+
+export const obtenerReporte = (departamento?: string, estado?: string) =>
+  api.get<ReporteVacacion[]>("/vacaciones/reporte", { 
+    params: { departamento, estado } 
+  });

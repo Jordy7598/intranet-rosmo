@@ -75,7 +75,7 @@ export default function DetalleSolicitud() {
             <Info label="Tipo" value={item.Tipo} />
             <Info label="Creada" value={fmtDateTime(item.Fecha_Creacion)} />
             {item.Tipo === "BOLETA" && item.Quincena ? (
-              <Info label="Período" value={`Q${item.Quincena} / ${pad2(item.Mes ?? undefined)} / ${item.Anio}`} />
+              <Info label="Período" value={`Quincena ${item.Quincena}: ${pad2(item.Mes ?? undefined)} / ${item.Anio}`} />
             ) : null}
             {item.Fecha_Inicio ? <Info label="Inicio" value={fmtDateTime(item.Fecha_Inicio)} /> : null}
             {item.Fecha_Fin ? <Info label="Fin" value={fmtDateTime(item.Fecha_Fin)} /> : null}
@@ -131,21 +131,6 @@ export default function DetalleSolicitud() {
           --shadow:0 1px 3px rgba(0,0,0,.08);
           --shadow-md:0 8px 24px rgba(0,0,0,.08);
         }
-        *{box-sizing:border-box}
-        .ds-shell{
-          display:flex; flex-direction:column; gap:16px;
-          font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-          color:var(--text);
-        }
-
-        .ds-header{
-          background:var(--card);
-          border:1px solid var(--border);
-          border-radius:var(--radius);
-          padding:18px 20px;
-          display:flex; align-items:center; justify-content:space-between; gap:12px;
-          box-shadow:var(--shadow);
-        }
         .ds-title{ margin:0; font-size:20px; font-weight:800; letter-spacing:-.2px; }
         .ds-subtitle{ margin:4px 0 0; color:var(--muted); font-size:13px; }
         .ds-badge{
@@ -158,6 +143,20 @@ export default function DetalleSolicitud() {
         .ds-badge.danger{ color:var(--danger); background:rgba(153,27,27,.06);  border-color:rgba(153,27,27,.22); }
         .ds-badge.neutral{color:#374151;       background:#fff;                 border-color:#e6e7ea; }
 
+        .ds-shell{
+          display:flex; flex-direction:column; gap:16px;
+          color:var(--text);
+          font-family: 'Inter', sans-serif;
+        }
+
+        .ds-header{
+          background:var(--card);
+          border:1px solid var(--border);
+          border-radius:var(--radius);
+          padding:18px 20px;
+          display:flex; align-items:center; justify-content:space-between; gap:12px;
+          box-shadow:var(--shadow);
+        }
         .ds-card{
           background:var(--card);
           border:1px solid var(--border);
@@ -220,18 +219,6 @@ export default function DetalleSolicitud() {
           padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer;
         }
         .btn-outline:hover{ border-color:#d1d5db; }
-
-        .ds-note{ margin-top:10px; color:var(--muted); font-size:12px; }
-
-        .ds-state{
-          display:flex; align-items:center; gap:10px; padding:24px; color:var(--muted);
-          font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .ds-state.ds-error{ color:var(--danger); }
-        .ds-spinner{
-          width:18px; height:18px; border:3px solid rgba(0,0,0,.08); border-top-color:var(--primary);
-          border-radius:50%; animation:spin .8s linear infinite;
-        }
         @keyframes spin{ to{ transform:rotate(360deg) } }
       `}</style>
     </>

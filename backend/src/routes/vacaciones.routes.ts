@@ -12,6 +12,9 @@ router.get("/mias", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.misSo
 router.get("/saldo", verifyToken, authorizeRoles(1,2,3,4,5), vacacionesCtrl.saldoActual);
 router.get("/saldo/:empleadoId", verifyToken, authorizeRoles(1,2,3), vacacionesCtrl.saldoPorEmpleado);
 
+// Reporte de vacaciones (Admin, TH, Jefe)
+router.get("/reporte", verifyToken, authorizeRoles(1,2,3), vacacionesCtrl.obtenerReporteVacaciones);
+
 // Consulta por empleado 
 router.get("/empleado/:empleadoId", verifyToken, authorizeRoles(1,2,3), vacacionesCtrl.solicitudesPorEmpleado);
 

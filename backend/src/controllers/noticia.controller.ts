@@ -101,6 +101,8 @@ export const deleteNoticia = async (req: Request, res: Response) => {
 // src/controllers/noticia.controller.ts
 import { Request, Response } from "express";
 import { pool } from "../config/db";
+import * as fs from "fs";
+import * as path from "path";
 
 // Obtener todas las noticias (con autor y conteo de likes/comentarios)
 export const getNoticias = async (req: Request, res: Response) => {
@@ -217,11 +219,28 @@ export const deleteNoticia = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    // Eliminar en orden debido a foreign keys
+    // Primero obtener la ruta de la imagen antes de eliminar
+    const [noticia]: any = await pool.query(
+      `SELECT Imagen_Principal FROM Noticia WHERE ID_Noticia = ?`,
+      [id]
+    );
+
+    // Eliminar registros relacionados en orden debido a foreign keys
     await pool.query(`DELETE FROM Like_Noticia WHERE ID_Noticia = ?`, [id]);
     await pool.query(`DELETE FROM Comentario_Noticia WHERE ID_Noticia = ?`, [id]);
     await pool.query(`DELETE FROM Visto_Noticia WHERE ID_Noticia = ?`, [id]);
     await pool.query(`DELETE FROM Noticia WHERE ID_Noticia = ?`, [id]);
+
+    // Eliminar imagen del servidor si existe
+    if (noticia.length > 0 && noticia[0].Imagen_Principal) {
+      const imagePath = path.join(__dirname, "..", "..", noticia[0].Imagen_Principal);
+      
+      // Verificar si el archivo existe antes de intentar eliminarlo
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+        console.log(`Imagen eliminada: ${imagePath}`);
+      }
+    }
 
     res.json({ message: "✅ Noticia eliminada correctamente" });
   } catch (error) {
