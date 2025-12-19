@@ -313,7 +313,7 @@ const ListaNoticias = () => {
                       <div className="post-image-container">
                         <img
                           className="post-image"
-                          src={`${import.meta.env.VITE_API_URL_Images || 'http://localhost:3000'}${noticia.Imagen_Principal}`}
+                          src={`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}${noticia.Imagen_Principal}`}
                           alt={noticia.Titulo}
                           loading="lazy"
                           onError={(e) => {
