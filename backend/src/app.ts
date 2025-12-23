@@ -43,8 +43,8 @@ app.use('/api/interactions', interactionRoutes);
 app.use("/api/notificaciones", notificationRoutes);
 app.use("/api/vacaciones", vacacionesRoutes);
 app.use("/api/solicitudes", solicitudRoutes);
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-app.use("/api/uploads", uploadsRoute);
+app.use("/api/uploads", uploadsRoute); // API de uploads primero
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads"))); // Archivos estáticos después
 app.use("/api/directorio", directorioRouter);
 app.use("/api/calendario", calendarioRoutes);
 

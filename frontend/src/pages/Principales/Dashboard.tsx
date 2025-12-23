@@ -6,7 +6,7 @@ import {
   Home, Newspaper, Image, FileText, BarChart3, Info, Calendar,
   Users, Plus, Bell, LogOut, User, Plane, CheckSquare,
   DollarSign, Clock, Utensils, FileCheck, FolderOpen, ClipboardList,
-  ThumbsUp, ExternalLink, ChevronLeft, PlusCircle, BellRing, Link as LinkIcon
+  ThumbsUp, ExternalLink, ChevronLeft, PlusCircle, BellRing, Link as LinkIcon, Settings
 } from "lucide-react";
 
 type NoticiaLite = { ID_Noticia: number; Titulo: string; Fecha_Publicacion: string; total_likes?: number };
@@ -404,6 +404,13 @@ function Dashboard() {
               <Link to="/directorio" className="nav-item">
                 <Users size={20} className="nav-icon icon-red" /> Directorio de usuarios
               </Link>
+
+              {/* Mantenimiento - Solo Administradores */}
+              {esAdmin && (
+                <Link to="/mantenimiento" className="nav-item">
+                  <Settings size={20} className="nav-icon icon-red" /> Mantenimiento
+                </Link>
+              )}
             </nav>
           </aside>
 

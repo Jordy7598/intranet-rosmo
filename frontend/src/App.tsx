@@ -46,6 +46,7 @@ import Galeria from "./pages/Galeria/Galeria";
 import ArchivosCorporativos  from './pages/ArchivosCorporativos/ArchivosCorporativos';
 import Encuestas from './pages/Encuestas/Encuestas';
 import ReporteVacaciones from './pages/Vacaciones/Reporte';
+import Mantenimiento from './pages/Mantenimiento/Mantenimiento';
 import ProtectedRoute from './ProtectedRoute';
 
 function App() {
@@ -117,6 +118,9 @@ function App() {
           <Route path="galeria" element={<Galeria />} />
           <Route path="archivos" element={<ArchivosCorporativos />} />
           <Route path="encuestas" element={<Encuestas />} />
+
+          {/* Mantenimiento */}
+          <Route path="mantenimiento" element={<Mantenimiento />} />
 
           </Route>
         </Route>

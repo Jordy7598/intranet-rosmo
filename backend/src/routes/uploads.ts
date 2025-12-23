@@ -3,6 +3,8 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { verifyToken, authorizeRoles } from "../middlewares/auth.middlewares";
+import { cleanupOrphanImages } from "../controllers/maintenance.controller";
 
 const router = Router();
 
@@ -34,5 +36,26 @@ router.post("/noticias", upload.single("file"), (req, res) => {
   const publicUrl = `/uploads/noticias/${req.file.filename}`;
   res.json({ url: publicUrl });
 });
+
+// DELETE /uploads/noticias/:filename - Eliminar imagen específica
+router.delete("/noticias/:filename", (req, res) => {
+  try {
+    const { filename } = req.params;
+    const filePath = path.join(UPLOAD_ROOT, filename);
+    
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: "Archivo no encontrado" });
+    }
+    
+    fs.unlinkSync(filePath);
+    res.json({ message: "Imagen eliminada correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar imagen:", error);
+    res.status(500).json({ error: "Error al eliminar imagen" });
+  }
+});
+
+// POST /uploads/cleanup - Limpiar imágenes huérfanas (solo administradores)
+router.post("/cleanup", verifyToken, authorizeRoles(1), cleanupOrphanImages);
 
 export default router;

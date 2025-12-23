@@ -1,6 +1,6 @@
 // src/pages/Noticias/CrearNoticia.tsx
 import { useState, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
 const areaOptions = ["General", "RRHH", "Ventas", "Operaciones", "IT", "Finanzas", "Marketing"];
@@ -21,6 +21,31 @@ export default function CrearNoticia() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
+
+  // NO usar useEffect cleanup automático porque es muy agresivo
+  // Solo permitir eliminación manual con el botón
+
+  const deleteUploadedImage = async (imageUrl: string) => {
+    try {
+      // Extraer nombre del archivo de la URL: /uploads/noticias/filename.jpg
+      const match = imageUrl.match(/\/uploads\/noticias\/(.+)$/);
+      if (!match) return;
+      
+      const filename = match[1];
+      await api.delete(`/uploads/noticias/${filename}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log("[Upload] Imagen eliminada:", filename);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      // Si es 404, el archivo ya no existe (no es un error crítico)
+      if (error?.response?.status === 404) {
+        console.log("[Upload] La imagen ya no existe en el servidor");
+      } else {
+        console.error("[Upload] Error al eliminar imagen:", error);
+      }
+    }
+  };
 
   const validate = () => {
     const e: typeof errors = {};
@@ -108,6 +133,21 @@ export default function CrearNoticia() {
     }
   };
 
+  const handleRemoveImage = async () => {
+    if (imagen) {
+      await deleteUploadedImage(imagen);
+      setImagen("");
+    }
+  };
+
+  const handleCancel = async () => {
+    // Si hay imagen subida, eliminarla antes de salir
+    if (imagen) {
+      await deleteUploadedImage(imagen);
+    }
+    navigate("/noticias");
+  };
+
   return (
     <>
       <div className="news-form-wrap">
@@ -118,7 +158,9 @@ export default function CrearNoticia() {
               Sube una imagen (opcional) y redacta tu publicación.
             </p>
           </div>
-          <Link to="/noticias" className="btn btn-ghost">Volver</Link>
+          <button type="button" className="btn btn-ghost" onClick={handleCancel}>
+            Volver
+          </button>
         </header>
 
         <form className="form-card" onSubmit={handleSubmit} noValidate>
@@ -203,7 +245,21 @@ export default function CrearNoticia() {
                     </div>
                   ) : (
                     <div className="upload-status">
-                      {imagen ? <span className="ok">Imagen cargada</span> : <span className="muted">Sin imagen</span>}
+                      {imagen ? (
+                        <>
+                          <span className="ok">✓ Imagen cargada</span>
+                          <button 
+                            type="button" 
+                            className="btn-remove-img" 
+                            onClick={handleRemoveImage}
+                            title="Eliminar imagen"
+                          >
+                            Quitar imagen
+                          </button>
+                        </>
+                      ) : (
+                        <span className="muted">Sin imagen</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -215,7 +271,7 @@ export default function CrearNoticia() {
               <button
                 type="button"
                 className="btn btn-ghost"
-                onClick={() => navigate("/noticias")}
+                onClick={handleCancel}
                 disabled={submitting}
               >
                 Cancelar
@@ -286,8 +342,29 @@ export default function CrearNoticia() {
         .dz-hint{ font-size:12px; color:#9ca3af; }
         .hidden-input{ display:none; }
         .dz-right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
-        .upload-status{ font-size:13px; }
+        .upload-status{ font-size:13px; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
         .upload-status .ok{ color:#059669; font-weight:700; }
+        .btn-remove-img{ 
+          padding:7px 12px; 
+          font-size:12.5px; 
+          border-radius:8px; 
+          border:1px solid #dc2626; 
+          background:#fff; 
+          color:#dc2626; 
+          cursor:pointer; 
+          font-weight:600; 
+          transition:all .2s ease;
+          letter-spacing:0.3px;
+        }
+        .btn-remove-img:hover{ 
+          background:#dc2626; 
+          color:#fff;
+          transform:translateY(-1px);
+          box-shadow:0 2px 8px rgba(220, 38, 38, 0.25);
+        }
+        .btn-remove-img:active{
+          transform:translateY(0);
+        }
         .muted{ color:#9ca3af; }
         .progress{ width:100%; height:8px; background:#f3f4f6; border-radius:999px; overflow:hidden; }
         .progress-bar{ height:100%; background:var(--primary); width:0%; transition: width .2s ease; }

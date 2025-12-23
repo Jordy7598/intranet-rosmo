@@ -18,8 +18,8 @@ export async function getSummary(req: Request, res: Response) {
            n.Titulo,
            n.Fecha_Publicacion,
            COUNT(ln.ID_Like) AS total_likes
-    FROM dba_rosmo.noticia n
-    LEFT JOIN dba_rosmo.like_noticia ln
+    FROM noticia n
+    LEFT JOIN like_noticia ln
       ON ln.ID_Noticia = n.ID_Noticia
     WHERE n.Estado = 'Publicada'
     GROUP BY n.ID_Noticia, n.Titulo, n.Fecha_Publicacion
@@ -30,7 +30,7 @@ export async function getSummary(req: Request, res: Response) {
   // Más reciente publicada
   const qMasReciente = `
     SELECT ID_Noticia, Titulo, Fecha_Publicacion
-    FROM dba_rosmo.noticia
+    FROM noticia
     WHERE Estado = 'Publicada'
     ORDER BY Fecha_Publicacion DESC
     LIMIT 1
@@ -42,7 +42,7 @@ export async function getSummary(req: Request, res: Response) {
       e.ID_Empleado AS id,
       CONCAT(e.Nombre, ' ', e.Apellido) AS nombre,
       e.Fecha_Nacimiento AS fecha
-    FROM dba_rosmo.empleado e
+    FROM empleado e
     WHERE e.Fecha_Nacimiento IS NOT NULL
       AND DATE_FORMAT(e.Fecha_Nacimiento, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
     ORDER BY nombre
@@ -55,7 +55,7 @@ export async function getSummary(req: Request, res: Response) {
       CONCAT(e.Nombre, ' ', e.Apellido) AS nombre,
       e.Fecha_Contratacion AS fecha,
       TIMESTAMPDIFF(YEAR, e.Fecha_Contratacion, CURDATE()) AS anios
-    FROM dba_rosmo.empleado e
+    FROM empleado e
     WHERE e.Fecha_Contratacion IS NOT NULL
       AND e.Fecha_Contratacion <= CURDATE()
       AND DATE_FORMAT(e.Fecha_Contratacion, '%m-%d') = DATE_FORMAT(CURDATE(), '%m-%d')
@@ -70,7 +70,7 @@ export async function getSummary(req: Request, res: Response) {
       ac.Nombre_Archivo AS titulo,
       ac.Ruta AS url,
       ac.Fecha_Creacion
-    FROM dba_rosmo.archivo_corporativo ac
+    FROM archivo_corporativo ac
     WHERE ac.Categoria IS NOT NULL AND LOWER(ac.Categoria) = 'reglamento'
     ORDER BY ac.Fecha_Creacion DESC
     LIMIT 6
@@ -84,7 +84,7 @@ export async function getSummary(req: Request, res: Response) {
       e.Titulo AS titulo,
       COALESCE(e.Link_Externo, CONCAT('/encuestas/', e.ID_Encuesta)) AS url,
       e.Fecha_Publicacion
-    FROM dba_rosmo.encuesta e
+    FROM encuesta e
     ORDER BY e.Fecha_Publicacion DESC
     LIMIT 5
   `;
