@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useNotificaciones } from "../../hooks/useNotificaciones";
 import api from "../../api/axios";
+import { getStatusAlmuerzoHoy } from "../../api/solicitudes.api";
 import {
   Home, Newspaper, Image, FileText, BarChart3, Info, Calendar,
   Users, Plus, Bell, LogOut, User, Plane, CheckSquare,
@@ -38,6 +39,7 @@ function Dashboard() {
   const [archivosRecientes, setArchivosRecientes] = useState<ArchivoMini[]>([]);
   const [encuestasRecientes, setEncuestasRecientes] = useState<EnlaceMini[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [almuerzoHoy, setAlmuerzoHoy] = useState<{ tieneSolicitud: boolean; horaRegistro: string | null } | null>(null);
 
   const toggleVacacionesSubmenu = () => {
     setVacacionesSubmenuOpen(!vacacionesSubmenuOpen);
@@ -104,6 +106,32 @@ function Dashboard() {
         setEncuestasRecientes(data.encuestasRecientes || []);
       })
       .catch(() => { });
+  }, []);
+
+  // Cargar estado del almuerzo
+  useEffect(() => {
+    getStatusAlmuerzoHoy()
+      .then((data) => {
+        setAlmuerzoHoy({ tieneSolicitud: data.tieneSolicitud, horaRegistro: data.horaRegistro });
+      })
+      .catch(() => { });
+  }, []);
+
+  // Escuchar evento de actualización de almuerzo
+  useEffect(() => {
+    const handleAlmuerzoActualizado = () => {
+      getStatusAlmuerzoHoy()
+        .then((data) => {
+          setAlmuerzoHoy({ tieneSolicitud: data.tieneSolicitud, horaRegistro: data.horaRegistro });
+        })
+        .catch(() => { });
+    };
+
+    window.addEventListener('almuerzoActualizado', handleAlmuerzoActualizado);
+    
+    return () => {
+      window.removeEventListener('almuerzoActualizado', handleAlmuerzoActualizado);
+    };
   }, []);
 
   if (!usuario) {
@@ -589,6 +617,34 @@ function Dashboard() {
               </div>
             </div>
 
+            {/* Tarjeta de estado de almuerzo */}
+            <div className="sidebar-section almuerzo-card">
+              <div className="almuerzo-icon-container">
+                <Utensils size={24} className="almuerzo-icon" />
+              </div>
+              {almuerzoHoy === null ? (
+                <div className="almuerzo-loading">Cargando...</div>
+              ) : almuerzoHoy.tieneSolicitud ? (
+                <>
+                  <h4 className="almuerzo-title">Almuerzo registrado</h4>
+                  <p className="almuerzo-message">
+                    Ya solicitaste salida para ir a almorzar hoy
+                    {almuerzoHoy.horaRegistro && ` a las ${almuerzoHoy.horaRegistro}`}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h4 className="almuerzo-title-no">Sin registro</h4>
+                  <p className="almuerzo-message">
+                    Hoy no saldrás a almorzar
+                  </p>
+                  <Link to="/requerimientos/crear-almuerzo" className="btn-almuerzo">
+                    Registrar almuerzo
+                  </Link>
+                </>
+              )}
+            </div>
+
             <div className="sidebar-section">
               <h4>Últimos archivos</h4>
               <ul className="list">
@@ -799,6 +855,61 @@ function Dashboard() {
         .avatar-item img { width: 36px; height: 36px; border-radius: 9999px; object-fit: cover; border: 1px solid #e5e7eb; }
         .avatar-name { font-size: 13px; }
         .empty-msg { font-size: 12px; color: #6b7280; }
+
+        /* Estilos para tarjeta de almuerzo */
+        .almuerzo-card {
+          text-align: center;
+          position: relative;
+          overflow: visible;
+          padding: 16px !important;
+        }
+        .almuerzo-icon-container {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 8px;
+        }
+        .almuerzo-icon {
+          color: #cc0000;
+        }
+        .almuerzo-loading {
+          color: #6b7280;
+          font-size: 13px;
+          padding: 10px;
+        }
+        .almuerzo-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: #059669;
+          margin: 0 0 8px 0;
+        }
+        .almuerzo-title-no {
+          font-size: 14px;
+          font-weight: 600;
+          color: #dc2626;
+          margin: 0 0 8px 0;
+        }
+        .almuerzo-message {
+          font-size: 12px;
+          color: #4b5563;
+          line-height: 1.4;
+          margin: 0 0 12px 0;
+        }
+        .btn-almuerzo {
+          display: inline-block;
+          padding: 8px 16px;
+          background: #cc0000;
+          color: white;
+          text-decoration: none;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 500;
+          transition: all 0.2s;
+        }
+        .btn-almuerzo:hover {
+          background: #b30000;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(204, 0, 0, 0.3);
+        }
 
         @media (max-width: 1200px) {
           .dashboard-content { grid-template-columns: 300px 1fr 300px; }

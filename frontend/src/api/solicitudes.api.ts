@@ -52,6 +52,10 @@ export async function postAlmuerzo(): Promise<ApiOk> {
   const { data } = await api.post("/solicitudes/almuerzo");
   return data;
 }
+export async function getStatusAlmuerzoHoy(): Promise<{ ok: boolean; tieneSolicitud: boolean; horaRegistro: string | null }> {
+  const { data } = await api.get("/solicitudes/almuerzo/status");
+  return data;
+}
 export async function getListaAlmuerzo(params?: { fecha?: string }): Promise<ApiList<any>> {
   const { data } = await api.get("/solicitudes/almuerzo/lista", { params });
   return data;

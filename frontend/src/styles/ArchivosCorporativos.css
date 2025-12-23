@@ -348,10 +348,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #f3f4f6;
-  color: #6b7280;
+  width: 55px;
+  height: 55px;
+  background: transparent;
+  color: none;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -399,6 +399,127 @@
   transform: scale(1.1);
 }
 
+.btn-icon-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon-info:hover {
+  background: #dbeafe;
+  transform: scale(1.1);
+}
+
+.icon-blue {
+  color: #3b82f6 !important;
+}
+
+/* Modal de Vista Previa */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 2rem;
+  backdrop-filter: blur(4px);
+}
+
+.modal-preview {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1200px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 60px);
+}
+
+.modal-header .btn-icon {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header .btn-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.modal-body-preview {
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+.preview-no-disponible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: #6b7280;
+  gap: 1rem;
+}
+
+.preview-no-disponible svg {
+  color: #9ca3af;
+}
+
+.preview-no-disponible p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.preview-info {
+  font-size: 14px !important;
+  color: #9ca3af !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .archivos-page {
@@ -427,5 +548,18 @@
   .btn-primary {
     width: 100%;
     justify-content: center;
+  }
+
+  .modal-overlay {
+    padding: 1rem;
+  }
+
+  .modal-preview {
+    width: 100%;
+    height: 95vh;
+  }
+
+  .modal-header h3 {
+    font-size: 16px;
   }
 }

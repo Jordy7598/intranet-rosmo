@@ -8,7 +8,7 @@ import {
   eliminarArchivo,
 } from "../../api/archivoCorporativo.api";
 import type { ArchivoCorporativo } from "../../api/archivoCorporativo.api";
-import { FileText, Upload, Trash2, X, ArrowDownToLine } from "lucide-react";
+import { FileText, Upload, Trash2, X, ArrowDownToLine, Eye } from "lucide-react";
 import "../../styles/ArchivosCorporativos.css";
 
 const ArchivosCorporativos: React.FC = () => {
@@ -19,6 +19,7 @@ const ArchivosCorporativos: React.FC = () => {
   const [categoria, setCategoria] = useState("General");
   const [uploading, setUploading] = useState(false);
   const [busqueda, setBusqueda] = useState("");
+  const [archivoPreview, setArchivoPreview] = useState<ArchivoCorporativo | null>(null);
 
   const rol = Number(localStorage.getItem("usuario_rol"));
   const esAdminORRHH = rol === 1 || rol === 2;
@@ -84,6 +85,10 @@ const ArchivosCorporativos: React.FC = () => {
     }
   };
 
+  const handleVistaPrevia = (archivo: ArchivoCorporativo) => {
+    setArchivoPreview(archivo);
+  };
+
   const handleDescargar = (ruta: string, nombre: string) => {
     const baseUrl = import.meta.env.VITE_API_URL_Images || "";
     const url = `${baseUrl}${ruta}`;
@@ -95,6 +100,15 @@ const ArchivosCorporativos: React.FC = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const getUrlCompleta = (ruta: string) => {
+    const baseUrl = import.meta.env.VITE_API_URL_Images || "";
+    return `${baseUrl}${ruta}`;
+  };
+
+  const esPDF = (nombreArchivo: string) => {
+    return nombreArchivo.toLowerCase().endsWith('.pdf');
   };
 
   const formatearFecha = (fecha: string) => {
@@ -257,6 +271,13 @@ const ArchivosCorporativos: React.FC = () => {
                 </div>
                 <div className="archivo-acciones">
                   <button
+                    className="btn-icon-info"
+                    onClick={() => handleVistaPrevia(archivo)}
+                    title="Vista Previa"
+                  >
+                    <Eye size={32} className="icon-blue" />
+                  </button>
+                  <button
                     className="btn-icon-success"
                     onClick={() =>
                       handleDescargar(archivo.Ruta, archivo.Nombre_Archivo)
@@ -282,6 +303,53 @@ const ArchivosCorporativos: React.FC = () => {
           </div>
         )}
       </section>
+
+      {/* Modal de Vista Previa */}
+      {archivoPreview && (
+        <div className="modal-overlay" onClick={() => setArchivoPreview(null)}>
+          <div className="modal-preview" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{archivoPreview.Nombre_Archivo}</h3>
+              <button
+                className="btn-icon"
+                onClick={() => setArchivoPreview(null)}
+              >
+                <X size={28} />
+              </button>
+            </div>
+            <div className="modal-body-preview">
+              {esPDF(archivoPreview.Nombre_Archivo) ? (
+                <iframe
+                  src={getUrlCompleta(archivoPreview.Ruta)}
+                  title="Vista Previa"
+                  className="preview-iframe"
+                />
+              ) : (
+                <div className="preview-no-disponible">
+                  <FileText size={64} />
+                  <p>Vista previa no disponible para este tipo de archivo</p>
+                  <p className="preview-info">
+                    Puedes descargarlo para verlo en tu dispositivo
+                  </p>
+                  <button
+                    className="btn-primary"
+                    onClick={() => {
+                      handleDescargar(
+                        archivoPreview.Ruta,
+                        archivoPreview.Nombre_Archivo
+                      );
+                      setArchivoPreview(null);
+                    }}
+                  >
+                    <ArrowDownToLine size={20} />
+                    Descargar Archivo
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

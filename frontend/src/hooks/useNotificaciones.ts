@@ -70,6 +70,49 @@ export const useNotificaciones = () => {
   useEffect(() => {
     fetchNotificaciones();
     fetchContador();
+
+    // Polling inteligente: actualizar cada 30 segundos
+    const POLLING_INTERVAL = 30000; // 30 segundos
+    let intervalId: NodeJS.Timeout;
+
+    const startPolling = () => {
+      intervalId = setInterval(() => {
+        // Solo hacer polling si la pestaña está visible
+        if (!document.hidden) {
+          fetchContador();
+          fetchNotificaciones();
+        }
+      }, POLLING_INTERVAL);
+    };
+
+    // Manejar visibilidad de la pestaña
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Pausar polling cuando la pestaña no está visible
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
+      } else {
+        // Reanudar polling y actualizar inmediatamente cuando la pestaña vuelve a ser visible
+        fetchContador();
+        fetchNotificaciones();
+        startPolling();
+      }
+    };
+
+    // Iniciar polling
+    startPolling();
+
+    // Escuchar cambios de visibilidad
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return {

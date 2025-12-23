@@ -35,6 +35,9 @@ export default function CrearAlmuerzo() {
     try {
       const res = await postAlmuerzo();
       setMsgOk(res?.message ?? "Salida de almuerzo registrada correctamente.");
+      
+      // Disparar evento personalizado para actualizar la tarjeta en el Dashboard
+      window.dispatchEvent(new CustomEvent('almuerzoActualizado'));
     } catch (e: any) {
       const s = e?.response?.status;
       if (s === 409) {

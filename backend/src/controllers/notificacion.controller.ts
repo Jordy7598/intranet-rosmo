@@ -283,3 +283,45 @@ export const getContadorNoLeidas = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error al obtener contador" });
   }
 };
+
+// Helper: Enviar notificación a todos los usuarios (excluyendo opcionalmente algunos)
+export const enviarNotificacionATodos = async (
+  titulo: string,
+  mensaje: string,
+  tipo: string,
+  linkDestino?: string,
+  excluirUsuarioId?: number
+) => {
+  try {
+    let query = "SELECT ID_Usuario FROM Usuario";
+    const params: any[] = [];
+
+    if (excluirUsuarioId) {
+      query += " WHERE ID_Usuario != ?";
+      params.push(excluirUsuarioId);
+    }
+
+    const [usuarios] = await pool.query<Usuario[]>(query, params);
+
+    if (usuarios.length > 0) {
+      const valores = usuarios.map((u: Usuario) => [
+        u.ID_Usuario,
+        titulo,
+        mensaje,
+        tipo,
+        linkDestino || null
+      ]);
+
+      await pool.query<ResultSetHeader>(
+        `INSERT INTO Notificacion (ID_Usuario, Titulo, Mensaje, Tipo, Link_Destino, Fecha_Creacion, Leido) 
+         VALUES ${valores.map(() => '(?, ?, ?, ?, ?, NOW(), FALSE)').join(', ')}`,
+        valores.flat()
+      );
+    }
+
+    return usuarios.length;
+  } catch (error) {
+    console.error("Error al enviar notificaciones masivas:", error);
+    throw error;
+  }
+};

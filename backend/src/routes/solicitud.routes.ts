@@ -3,6 +3,7 @@ import { verifyToken, authorizeRoles } from "../middlewares/auth.middlewares";
 import  {
     crearAlmuerzo,
     listaAlmuerzoPorFecha,
+    statusAlmuerzoHoy,
     crearCarta,
     crearBoleta,
     obtenerBoleta,
@@ -18,6 +19,7 @@ const router = Router();
 /** Roles: 1=Admin, 2=Talento Humano, 3=Jefe, 4=Empleado, 5=Mercadeo */
 // ALMUERZO
 router.post("/almuerzo", verifyToken, authorizeRoles(1, 2, 3, 4, 5), crearAlmuerzo);
+router.get("/almuerzo/status", verifyToken, authorizeRoles(1, 2, 3, 4, 5), statusAlmuerzoHoy);
 router.get("/almuerzo/lista", verifyToken, authorizeRoles(1,2), listaAlmuerzoPorFecha);
 
 // CARTA DE INGRESOS

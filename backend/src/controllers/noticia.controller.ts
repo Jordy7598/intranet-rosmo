@@ -103,6 +103,7 @@ import { Request, Response } from "express";
 import { pool } from "../config/db";
 import * as fs from "fs";
 import * as path from "path";
+import { enviarNotificacionATodos } from "./notificacion.controller";
 
 // Obtener todas las noticias (con autor y conteo de likes/comentarios)
 export const getNoticias = async (req: Request, res: Response) => {
@@ -181,10 +182,29 @@ export const createNoticia = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "No se pudo identificar al autor" });
     }
 
-    await pool.query(
+    // Insertar la noticia
+    const [result]: any = await pool.query(
       `INSERT INTO Noticia (Titulo, Cuerpo, Imagen_Principal, Fecha_Publicacion, ID_Autor, Areas, Estado)
        VALUES (?, ?, ?, NOW(), ?, ?, ?)`,
       [Titulo, Cuerpo, Imagen_Principal, ID_Autor, Areas, Estado]
+    );
+
+    const noticiaId = result.insertId;
+
+    // Obtener el nombre del autor
+    const [autor]: any = await pool.query(
+      `SELECT Nombre_Usuario FROM Usuario WHERE ID_Usuario = ?`,
+      [ID_Autor]
+    );
+    const nombreAutor = autor[0]?.Nombre_Usuario || "Administración";
+
+    // Enviar notificación a todos los usuarios (excepto el autor)
+    await enviarNotificacionATodos(
+      "📰 Nueva publicación",
+      `${nombreAutor} publicó: "${Titulo}"`,
+      "Noticia",
+      `/noticias/${noticiaId}`,
+      ID_Autor // Excluir al autor
     );
 
     res.json({ message: "✅ Noticia creada correctamente" });

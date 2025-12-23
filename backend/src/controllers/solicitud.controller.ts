@@ -157,6 +157,35 @@ export const listaAlmuerzoPorFecha = async (req: Request, res: Response) => {
   }
 };
 
+/** GET /api/solicitudes/almuerzo/status - Verifica si el usuario ya solicitó almuerzo hoy */
+export const statusAlmuerzoHoy = async (req: Request, res: Response) => {
+  try {
+    const userId = getUserId(req);
+    if (!userId) return res.status(401).json({ ok: false, message: "No autenticado" });
+
+    const [rows]: any = await pool.query(
+      `SELECT ID_Solicitud, TIME(Fecha_Creacion) AS Hora_Registro
+         FROM Solicitud
+        WHERE ID_Usuario = ?
+          AND Tipo = 'ALMUERZO'
+          AND DATE(Fecha_Creacion) = CURDATE()
+        LIMIT 1`,
+      [userId]
+    );
+
+    const tieneSolicitud = rows.length > 0;
+    
+    return res.json({ 
+      ok: true, 
+      tieneSolicitud,
+      horaRegistro: tieneSolicitud ? rows[0].Hora_Registro : null
+    });
+  } catch (e) {
+    console.error("statusAlmuerzoHoy", e);
+    return res.status(500).json({ ok: false, message: "Error interno" });
+  }
+};
+
 /** ===================== CARTA DE INGRESOS (solo TH) ===================== */
 /** POST /api/solicitudes/carta */
 export const crearCarta = async (req: Request, res: Response) => {
