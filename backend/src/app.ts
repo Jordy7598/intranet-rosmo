@@ -19,6 +19,7 @@ import vacacionesRoutes from "./routes/vacaciones.routes";
 import solicitudRoutes from "./routes/solicitud.routes";
 import directorioRouter from "./routes/directorio.routes";
 import calendarioRoutes from "./routes/calendario.routes";
+import archivoCorporativoRoutes from "./routes/archivoCorporativo.routes";
 
 
 dotenv.config();
@@ -47,6 +48,7 @@ app.use("/api/uploads", uploadsRoute); // API de uploads primero
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads"))); // Archivos estáticos después
 app.use("/api/directorio", directorioRouter);
 app.use("/api/calendario", calendarioRoutes);
+app.use("/api/archivos-corporativos", archivoCorporativoRoutes);
 
 
 
