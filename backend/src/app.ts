@@ -20,6 +20,7 @@ import solicitudRoutes from "./routes/solicitud.routes";
 import directorioRouter from "./routes/directorio.routes";
 import calendarioRoutes from "./routes/calendario.routes";
 import archivoCorporativoRoutes from "./routes/archivoCorporativo.routes";
+import galeriaRoutes from "./routes/galeria.routes";
 
 
 dotenv.config();
@@ -49,6 +50,7 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads"))); // Arc
 app.use("/api/directorio", directorioRouter);
 app.use("/api/calendario", calendarioRoutes);
 app.use("/api/archivos-corporativos", archivoCorporativoRoutes);
+app.use("/api/galeria", galeriaRoutes);
 
 
 

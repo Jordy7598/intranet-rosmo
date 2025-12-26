@@ -115,7 +115,7 @@ function App() {
           <Route path="centro" element={<SolicitudIndex />} />
           <Route path="/info/guia" element={<GuiaIntranet />} />
           <Route path="informacion" element={<Informacion />} />
-          <Route path="galeria" element={<Galeria />} />
+          <Route path="galeria/*" element={<Galeria />} />
           <Route path="archivos" element={<ArchivosCorporativos />} />
           <Route path="encuestas" element={<Encuestas />} />
 
