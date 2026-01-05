@@ -1,21 +1,16 @@
+import { Routes, Route } from "react-router-dom";
+import EncuestasList from "./EncuestasList";
+import CrearEncuesta from "./CrearEncuesta";
+import EncuestaDetalle from "./EncuestaDetalle";
+
 const Encuestas: React.FC = () => {
   return (
-    <div className="encuestas-page">
-
-      <section className="card guiadash-card">
-          <div className="card-head">
-            <strong>PRÓXIMAMENTE</strong>
-            <h2>📝 Encuestas</h2>
-          </div>
-          <p>
-            Participa en encuestas internas (clima laboral, iniciativas, etc.). Se muestran como enlaces
-            a formularios externos y tienen fechas de disponibilidad.
-          </p>
-          <ul className="bullets">
-            <li>Responde dentro del período indicado.</li>
-          </ul>
-        </section>
-    </div>
+    <Routes>
+      <Route index element={<EncuestasList />} />
+      <Route path="crear" element={<CrearEncuesta />} />
+      <Route path="editar/:id" element={<CrearEncuesta />} />
+      <Route path=":id" element={<EncuestaDetalle />} />
+    </Routes>
   );
 };
 

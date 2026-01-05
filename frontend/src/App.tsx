@@ -117,7 +117,7 @@ function App() {
           <Route path="informacion" element={<Informacion />} />
           <Route path="galeria/*" element={<Galeria />} />
           <Route path="archivos" element={<ArchivosCorporativos />} />
-          <Route path="encuestas" element={<Encuestas />} />
+          <Route path="encuestas/*" element={<Encuestas />} />
 
           {/* Mantenimiento */}
           <Route path="mantenimiento" element={<Mantenimiento />} />

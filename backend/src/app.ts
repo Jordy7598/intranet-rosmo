@@ -21,6 +21,7 @@ import directorioRouter from "./routes/directorio.routes";
 import calendarioRoutes from "./routes/calendario.routes";
 import archivoCorporativoRoutes from "./routes/archivoCorporativo.routes";
 import galeriaRoutes from "./routes/galeria.routes";
+import encuestaRoutes from "./routes/encuesta.routes";
 
 
 dotenv.config();
@@ -51,6 +52,7 @@ app.use("/api/directorio", directorioRouter);
 app.use("/api/calendario", calendarioRoutes);
 app.use("/api/archivos-corporativos", archivoCorporativoRoutes);
 app.use("/api/galeria", galeriaRoutes);
+app.use("/api/encuestas", encuestaRoutes);
 
 
 
