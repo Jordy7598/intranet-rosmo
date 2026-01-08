@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api/axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL_Images || "http://localhost:3000";
+
 type Perfil = {
   // Usuario
   ID_Usuario: number;
@@ -96,11 +98,17 @@ const MiPerfil = () => {
           <div style={{ textAlign: "center" }}>
             <img
               src={
-                perfil.Foto_Perfil ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreEmpleado || "U")}&background=cc0000&color=fff`
+                perfil.Foto_Perfil
+                  ? perfil.Foto_Perfil.startsWith('http')
+                    ? perfil.Foto_Perfil
+                    : `${API_BASE_URL}${perfil.Foto_Perfil}`
+                  : `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreEmpleado || "U")}&background=cc0000&color=fff`
               }
               alt="Foto de perfil"
               style={{ width: 140, height: 140, borderRadius: "50%", objectFit: "cover" }}
+              onError={(e) => {
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreEmpleado || "U")}&background=cc0000&color=fff`;
+              }}
             />
             <h2 style={{ marginTop: 12 }}>{nombreEmpleado}</h2>
             <p style={{ color: "#666", marginTop: 4 }}>{perfil.Nombre_Rol}</p>

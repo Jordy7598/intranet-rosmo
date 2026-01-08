@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import api from "../../api/axios";
+import { getFotoUrl, getImageErrorHandler } from "../../utils/imageHelper";
 
 type Emp = {
   id: number;
@@ -64,9 +65,10 @@ export default function DirectorioLista() {
           <Link to={`/directorio/${p.id}`} key={p.id} className="dir-card" title={p.nombre}>
             <img
               className="dir-avatar"
-              src={p.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.nombre)}&background=cc0000&color=fff`}
+              src={getFotoUrl(p.foto, p.nombre)}
               alt={p.nombre}
               loading="lazy"
+              onError={getImageErrorHandler(p.nombre)}
             />
             <div className="dir-info">
               <div className="dir-name">{p.nombre}</div>

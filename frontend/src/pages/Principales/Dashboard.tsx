@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useNotificaciones } from "../../hooks/useNotificaciones";
 import api from "../../api/axios";
+import { getFotoUrl, getImageErrorHandler } from "../../utils/imageHelper";
 import { getStatusAlmuerzoHoy } from "../../api/solicitudes.api";
 import {
   Home, Newspaper, Image, FileText, BarChart3, Info, Calendar,
@@ -301,13 +302,11 @@ function Dashboard() {
             {/* Perfil */}
             <div className="profile-container">
               <img
-                src={
-                  localStorage.getItem("usuario_foto") ||
-                  `https://ui-avatars.com/api/?name=${usuario?.nombre || "U"}&background=ffffff&color=CC0000`
-                }
+                src={getFotoUrl(localStorage.getItem("usuario_foto"), usuario?.nombre || "U", "ffffff")}
                 alt="Foto de perfil"
                 className="profile-photo"
                 onClick={() => setMenuAbierto(!menuAbierto)}
+                onError={getImageErrorHandler(usuario?.nombre || "U", "ffffff")}
               />
               {menuAbierto && (
                 <div className="profile-dropdown">
@@ -330,12 +329,10 @@ function Dashboard() {
           <aside className="sidebar">
             <div className="user-info">
               <img
-                src={
-                  localStorage.getItem("usuario_foto") ||
-                  `https://ui-avatars.com/api/?name=${usuario?.nombre || "U"}&background=cc0000&color=fff`
-                }
+                src={getFotoUrl(localStorage.getItem("usuario_foto"), usuario?.nombre || "U")}
                 alt="Avatar"
                 className="user-avatar"
+                onError={getImageErrorHandler(usuario?.nombre || "U")}
               />
               <span className="user-name">{usuario?.nombre}</span>
             </div>
@@ -588,8 +585,9 @@ function Dashboard() {
                   {cumpleaniosHoy.map((p) => (
                     <Link key={p.id} to={`/directorio/${p.id}`} className="avatar-item" title={p.nombre}>
                       <img
-                        src={p.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.nombre)}&background=cc0000&color=fff`}
+                        src={getFotoUrl(p.foto, p.nombre)}
                         alt={p.nombre}
+                        onError={getImageErrorHandler(p.nombre)}
                       />
                       <span className="avatar-name">{p.nombre}</span>
                     </Link>
@@ -604,8 +602,9 @@ function Dashboard() {
                   {aniversariosHoy.map((p) => (
                     <Link key={p.id} to={`/directorio/${p.id}`} className="avatar-item" title={p.nombre}>
                       <img
-                        src={p.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.nombre)}&background=0f766e&color=fff`}
+                        src={getFotoUrl(p.foto, p.nombre, "0f766e")}
                         alt={p.nombre}
+                        onError={getImageErrorHandler(p.nombre, "0f766e")}
                       />
                       <span className="avatar-name">
                         {p.nombre}{p.anios != null ? ` • ${p.anios} año${p.anios === 1 ? "" : "s"}` : ""}

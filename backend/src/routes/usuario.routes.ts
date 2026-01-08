@@ -6,7 +6,9 @@ import {
   updateUsuario,
   deleteUsuario,
   getJefesInmediatos,
-  getMiPerfil 
+  getMiPerfil,
+  uploadFotoPerfil,
+  subirFotoPerfil
 } from "../controllers/usuario.controller";
 import { verifyToken, authorizeRoles } from "../middlewares/auth.middlewares";
 
@@ -18,6 +20,7 @@ router.use(verifyToken);
 router.get("/mi-perfil", getMiPerfil);
 router.get("/", authorizeRoles(1), getUsuarios);
 router.get("/:id", getUsuarioById);
+router.post("/upload-foto", uploadFotoPerfil.single("foto"), subirFotoPerfil);
 router.post("/", authorizeRoles(1), createUsuario);
 router.put("/:id", authorizeRoles(1), updateUsuario);
 router.delete("/:id", authorizeRoles(1), deleteUsuario);

@@ -34,7 +34,8 @@ export const login = async (req: Request, res: Response) => {
         id: user.ID_Usuario,
         nombre: user.Nombre_Usuario,
         rol: user.ID_Rol,
-        empleado: user.ID_Empleado
+        empleado: user.ID_Empleado,
+        foto: user.Foto_Perfil
       }
     });
   } catch (error) {

@@ -1,6 +1,61 @@
 import { Request, Response } from "express";
 import { pool } from "../config/db";
 import bcrypt from "bcryptjs";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Configuración de multer para fotos de perfil
+const uploadDir = path.join(__dirname, "../../uploads/perfiles");
+
+// Crear directorio si no existe
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const allowedTypes = /jpeg|jpg|png|gif|webp/;
+  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb(new Error("Solo se permiten imágenes (jpeg, jpg, png, gif, webp)"));
+  }
+};
+
+export const uploadFotoPerfil = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: fileFilter,
+});
+
+// Endpoint para subir foto de perfil
+export const subirFotoPerfil = async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No se ha subido ningún archivo" });
+    }
+    
+    // Retornar la ruta relativa
+    const rutaFoto = `/uploads/perfiles/${req.file.filename}`;
+    res.json({ rutaFoto });
+  } catch (error) {
+    console.error("Error al subir foto:", error);
+    res.status(500).json({ message: "Error al subir foto de perfil" });
+  }
+};
 
 // Obtener todos los usuarios
 export const getUsuarios = async (_req: Request, res: Response) => {

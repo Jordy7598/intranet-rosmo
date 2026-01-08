@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api/axios";
+import { getFotoUrl, getImageErrorHandler } from "../../utils/imageHelper";
 
 interface Noticia {
   ID_Noticia: number;
@@ -10,6 +11,7 @@ interface Noticia {
   Imagen_Principal: string;
   Fecha_Publicacion: string;
   Autor: string;
+  Autor_Foto?: string;
   Areas: string;
   Estado: string;
   total_likes: number;
@@ -236,9 +238,12 @@ const ListaNoticias = () => {
                 <article key={noticia.ID_Noticia} className="post-card">
                   <div className="post-header">
                     <div className="author-info">
-                      <div className="author-avatar">
-                        {noticia.Autor.charAt(0).toUpperCase()}
-                      </div>
+                      <img
+                        className="author-avatar"
+                        src={getFotoUrl(noticia.Autor_Foto, noticia.Autor)}
+                        alt={noticia.Autor}
+                        onError={getImageErrorHandler(noticia.Autor)}
+                      />
                       <div className="author-details">
                         <h3 className="author-name">{noticia.Autor}</h3>
                         <div className="post-meta">
@@ -536,6 +541,7 @@ const ListaNoticias = () => {
           font-weight: 700;
           flex-shrink: 0;
           box-shadow: 0 2px 8px rgba(204, 0, 0, 0.15);
+          object-fit: cover;
         }
 
         .author-details {

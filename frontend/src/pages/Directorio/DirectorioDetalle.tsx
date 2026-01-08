@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../api/axios";
+import { getFotoUrl, getImageErrorHandler } from "../../utils/imageHelper";
 
 type Emp = {
   id: number;
@@ -33,8 +34,9 @@ export default function DirectorioDetalle() {
       <div className="top">
         <img
           className="big-avatar"
-          src={emp.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreCompleto)}&background=cc0000&color=fff&size=128`}
+          src={getFotoUrl(emp.foto, nombreCompleto)}
           alt={nombreCompleto}
+          onError={getImageErrorHandler(nombreCompleto)}
         />
         <div className="info">
           <h2>{nombreCompleto}</h2>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import { getFotoUrl, getImageErrorHandler } from "../../utils/imageHelper";
 
 type Usuario = {
   ID_Usuario: number;
@@ -101,11 +102,11 @@ export default function Usuarios() {
                     <td>
                       <div className="user-cell">
                         <div className="avatar">
-                          {u.Foto_Perfil ? (
-                            <img src={u.Foto_Perfil} alt={u.Nombre_Usuario} />
-                          ) : (
-                            <span>{String(u.Nombre_Usuario || "?").charAt(0).toUpperCase()}</span>
-                          )}
+                          <img
+                            src={getFotoUrl(u.Foto_Perfil, u.Nombre_Usuario)}
+                            alt={u.Nombre_Usuario}
+                            onError={getImageErrorHandler(u.Nombre_Usuario)}
+                          />
                         </div>
                         <div className="user-meta">
                           <div className="user-name">{u.Nombre_Usuario}</div>

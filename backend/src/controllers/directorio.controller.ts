@@ -10,15 +10,17 @@ export async function listDirectory(req: Request, res: Response) {
     const offset = (page - 1) * limit;
 
     let query = `
-      SELECT 
+      SELECT DISTINCT
         e.ID_Empleado AS id,
         CONCAT(e.Nombre, ' ', e.Apellido) AS nombre,
         e.Correo AS correo,
         p.Nombre_Puesto AS puesto,
-        d.Nombre_Departamento AS area
+        d.Nombre_Departamento AS area,
+        u.Foto_Perfil AS foto
       FROM empleado e
       LEFT JOIN puesto p ON e.ID_Puesto = p.ID_Puesto
       LEFT JOIN departamento d ON e.ID_Departamento = d.ID_Departamento
+      LEFT JOIN usuario u ON u.ID_Empleado = e.ID_Empleado AND u.Estado = 'Activo'
       WHERE e.Estado = 'Activo'
     `;
 
@@ -41,7 +43,7 @@ export async function listDirectory(req: Request, res: Response) {
       params.push(area.trim());
     }
 
-    query += ` ORDER BY e.Nombre, e.Apellido LIMIT ? OFFSET ?`;
+    query += ` ORDER BY nombre LIMIT ? OFFSET ?`;
     params.push(limit, offset);
 
     const [empleados]: any = await pool.query(query, params);
@@ -51,6 +53,7 @@ export async function listDirectory(req: Request, res: Response) {
       FROM empleado e
       LEFT JOIN puesto p ON e.ID_Puesto = p.ID_Puesto
       LEFT JOIN departamento d ON e.ID_Departamento = d.ID_Departamento
+      LEFT JOIN usuario u ON u.ID_Empleado = e.ID_Empleado
       WHERE e.Estado = 'Activo'
     `;
 
@@ -104,10 +107,12 @@ export async function getEmployeeById(req: Request, res: Response) {
         d.Nombre_Departamento AS area,
         e.Fecha_Nacimiento AS fechaNacimiento,
         e.Fecha_Contratacion AS fechaContratacion,
-        e.Estado AS estado
+        e.Estado AS estado,
+        u.Foto_Perfil AS foto
       FROM empleado e
       LEFT JOIN puesto p ON e.ID_Puesto = p.ID_Puesto
       LEFT JOIN departamento d ON e.ID_Departamento = d.ID_Departamento
+      LEFT JOIN usuario u ON u.ID_Empleado = e.ID_Empleado
       WHERE e.ID_Empleado = ?
       LIMIT 1
     `;
